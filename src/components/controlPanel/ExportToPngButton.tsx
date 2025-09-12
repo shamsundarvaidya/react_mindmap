@@ -1,5 +1,7 @@
 import React from 'react';
 import { useReactFlow, getNodesBounds } from '@xyflow/react';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { selectNode } from '../../store/mindmapSlice';
 import { toPng } from 'html-to-image';
 
 interface ExportToPngButtonProps {
@@ -18,8 +20,10 @@ const padding = 20; // px
 
  const ExportPngButton: React.FC<ExportToPngButtonProps> = ({ variant = 'default', className = '' }) => {
   const { getNodes } = useReactFlow();
+  const dispatch = useAppDispatch();
+  const selectedNodeId = useAppSelector((state) => state.mindmap.selectedNodeId);
 
-  const handleExportPng = () => {
+  const handleExportPng = async () => {
     const nodesBounds = getNodesBounds(getNodes());
 
     // Expand bounds by padding
@@ -46,17 +50,30 @@ const padding = 20; // px
     }
 
     const savedBg = localStorage.getItem('canvas-bg') || '#ffffff';
-    toPng(doc, {
-      backgroundColor: savedBg,
-      width: imageWidth,
-      height: imageHeight,
-      pixelRatio: 2,
-      style: {
-        width: `${imageWidth}px`,
-        height: `${imageHeight}px`,
-        transform: `translate(${x}px, ${y}px) scale(1)`,
-      },
-    }).then(downloadImage);
+    const prevSelected = selectedNodeId;
+    if (prevSelected) {
+      dispatch(selectNode(null as any));
+      await new Promise((r) => setTimeout(r, 50));
+    }
+
+    try {
+      const dataUrl = await toPng(doc, {
+        backgroundColor: savedBg,
+        width: imageWidth,
+        height: imageHeight,
+        pixelRatio: 2,
+        style: {
+          width: `${imageWidth}px`,
+          height: `${imageHeight}px`,
+          transform: `translate(${x}px, ${y}px) scale(1)`,
+        },
+      });
+      downloadImage(dataUrl);
+    } finally {
+      if (prevSelected) {
+        dispatch(selectNode(prevSelected));
+      }
+    }
   };
 
   const baseDefault = "inline-flex items-center gap-1.5 bg-emerald-600 text-white px-3 py-1.5 rounded-lg shadow-sm hover:bg-emerald-700 active:bg-emerald-800 text-sm transition";

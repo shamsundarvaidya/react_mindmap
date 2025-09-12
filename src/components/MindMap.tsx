@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect, useMemo } from "react";
+import React, { useCallback, useRef, useEffect, useMemo, useState } from "react";
 import { useAppSelector, useAppDispatch } from "../store";
 import {
   selectNode,
@@ -32,6 +32,10 @@ const MindMap = () => {
   const { nodes, edges } = useAppSelector((state) => state.mindmap);
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [edgesAnimated, setEdgesAnimated] = useState<boolean>(() => {
+    const saved = localStorage.getItem('edges-animated');
+    return saved ? saved === 'true' : true;
+  });
 
   const dispatch = useAppDispatch();
 
@@ -45,9 +49,9 @@ const MindMap = () => {
     return edges.map((e) => {
       const target = nodesById.get(e.target);
       const stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1"; // slate-300 fallback
-      return { ...e, style: { ...(e.style || {}), stroke, strokeWidth: 3 } };
+      return { ...e, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 3 } };
     });
-  }, [edges, nodesById]);
+  }, [edges, nodesById, edgesAnimated]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
@@ -122,7 +126,15 @@ const MindMap = () => {
       }
     };
     window.addEventListener('canvas-bg-change', onBgChange as EventListener);
-    return () => window.removeEventListener('canvas-bg-change', onBgChange as EventListener);
+    const onEdgesAnimChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { animated: boolean };
+      setEdgesAnimated(detail.animated);
+    };
+    window.addEventListener('edges-animated-change', onEdgesAnimChange as EventListener);
+    return () => {
+      window.removeEventListener('canvas-bg-change', onBgChange as EventListener);
+      window.removeEventListener('edges-animated-change', onEdgesAnimChange as EventListener);
+    };
   }, []);
 
   return (

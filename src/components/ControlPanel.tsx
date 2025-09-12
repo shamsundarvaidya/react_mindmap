@@ -28,6 +28,10 @@ const ControlPanel = () => {
   const fileMenuRef = useRef<HTMLDivElement | null>(null);
   const layoutMenuRef = useRef<HTMLDivElement | null>(null);
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
+  const [edgesAnimated, setEdgesAnimated] = useState<boolean>(() => {
+    const saved = localStorage.getItem('edges-animated');
+    return saved ? saved === 'true' : true;
+  });
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
@@ -287,6 +291,20 @@ const ControlPanel = () => {
                   ))}
                 </div>
               </div>
+              <label className="w-full flex items-center gap-2 px-3 py-2 text-slate-700 text-sm cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  className="accent-blue-600"
+                  checked={edgesAnimated}
+                  onChange={(e) => {
+                    const val = e.target.checked;
+                    setEdgesAnimated(val);
+                    localStorage.setItem('edges-animated', String(val));
+                    window.dispatchEvent(new CustomEvent('edges-animated-change', { detail: { animated: val } }));
+                  }}
+                />
+                Animate edges
+              </label>
               <button
                 className="w-full inline-flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 text-slate-700 text-sm"
                 onClick={() => {
