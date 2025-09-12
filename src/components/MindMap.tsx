@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { useAppSelector, useAppDispatch } from "../store";
 import {
   selectNode,
@@ -31,8 +31,23 @@ const nodeTypes = {
 const MindMap = () => {
   const { nodes, edges } = useAppSelector((state) => state.mindmap);
   const flowRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useAppDispatch();
+
+  const nodesById = useMemo(() => {
+    const map = new Map<string, Node<NodeData>>();
+    nodes.forEach((n) => map.set(n.id, n as Node<NodeData>));
+    return map;
+  }, [nodes]);
+
+  const themedEdges = useMemo(() => {
+    return edges.map((e) => {
+      const target = nodesById.get(e.target);
+      const stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1"; // slate-300 fallback
+      return { ...e, style: { ...(e.style || {}), stroke, strokeWidth: 3 } };
+    });
+  }, [edges, nodesById]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
@@ -87,16 +102,37 @@ const MindMap = () => {
         console.warn("Invalid mind map data in localStorage.");
       }
     }
+
+    // Apply canvas background from localStorage or default
+    const savedBg = localStorage.getItem('canvas-bg');
+    const defaultBg = '#0B1220'; // deeper near-black for stronger contrast
+    const shouldMigrate = !savedBg || savedBg === '#0F172A' || savedBg === '#ffffff';
+    const colorToUse = shouldMigrate ? defaultBg : (savedBg as string);
+    if (containerRef.current) {
+      containerRef.current.style.backgroundColor = colorToUse;
+    }
+    if (shouldMigrate) {
+      localStorage.setItem('canvas-bg', defaultBg);
+    }
+
+    const onBgChange = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { color: string };
+      if (containerRef.current) {
+        containerRef.current.style.backgroundColor = detail.color;
+      }
+    };
+    window.addEventListener('canvas-bg-change', onBgChange as EventListener);
+    return () => window.removeEventListener('canvas-bg-change', onBgChange as EventListener);
   }, []);
 
   return (
-    <div className="h-screen flex flex-col">
+    <div className="h-screen flex flex-col" ref={containerRef}>
       <ControlPanel />
       <div className="flex-1">
         <ReactFlow
           ref={flowRef}
           nodes={nodes}
-          edges={edges}
+          edges={themedEdges}
           nodeTypes={nodeTypes}
           onNodeClick={onNodeClick}
           onNodesChange={onNodesChange}
@@ -110,7 +146,7 @@ const MindMap = () => {
         >
           <Background />
           <Controls />
-          <MiniMap />
+         
         </ReactFlow>
       </div>
     </div>

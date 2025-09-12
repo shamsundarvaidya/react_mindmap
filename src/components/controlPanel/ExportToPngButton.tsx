@@ -45,8 +45,9 @@ const padding = 20; // px
       return;
     }
 
+    const savedBg = localStorage.getItem('canvas-bg') || '#ffffff';
     toPng(doc, {
-      backgroundColor: '#ffffff',
+      backgroundColor: savedBg,
       width: imageWidth,
       height: imageHeight,
       pixelRatio: 2,

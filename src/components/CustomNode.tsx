@@ -16,10 +16,41 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
   const targetPosition = layoutDirection === 'TB' ? Position.Top : Position.Left;
 
 
-  const backgroundColor = data.color || '#ffffff';
+  const backgroundColor = (data.color as string) || '#ffffff';
   const isSelected = id === selectedNodeId;
-  const borderColor = isSelected ? 'border-green-500' : 'border-gray-300';
-  const ring = isSelected ? 'ring-2 ring-green-300' : '';
+
+  // Helpers to derive theme-matching highlight colors
+  const hexToRgb = (hex: string) => {
+    const normalized = hex.replace('#', '');
+    const bigint = parseInt(normalized.length === 3
+      ? normalized.split('').map((c) => c + c).join('')
+      : normalized, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    return { r, g, b };
+  };
+
+  const rgbaString = (hex: string, alpha: number) => {
+    const { r, g, b } = hexToRgb(hex);
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  };
+
+  const darkenHex = (hex: string, amount: number) => {
+    const { r, g, b } = hexToRgb(hex);
+    const factor = Math.max(0, Math.min(1, 1 - amount));
+    const dr = Math.round(r * factor);
+    const dg = Math.round(g * factor);
+    const db = Math.round(b * factor);
+    const toHex = (n: number) => n.toString(16).padStart(2, '0');
+    return `#${toHex(dr)}${toHex(dg)}${toHex(db)}`;
+  };
+
+  const highlightBorder = isSelected ? darkenHex(backgroundColor, 0.5) : '#D1D5DB'; // stronger contrast when selected
+  const glowColor = rgbaString(backgroundColor, 0.55);
+  const highlightRing = isSelected
+    ? `0 0 0 4px ${glowColor}, 0 0 24px 6px ${rgbaString(backgroundColor, 0.35)}`
+    : undefined;
 
   // Focus on input when editing starts
   useEffect(() => {
@@ -47,13 +78,20 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
 
   return (
     <div
-      
+      style={{
+        backgroundColor,
+        borderColor: highlightBorder,
+        borderWidth: isSelected ? 2 : 1,
+        boxShadow: highlightRing,
+        // CSS variable used by the glow animation
+        ['--glow-color' as any]: glowColor,
+        animation: isSelected ? 'glow-pulse 1.2s ease-in-out infinite' : undefined,
+      }}
       className={`
-         ${borderColor} ${ring}
         border rounded-xl shadow-lg px-5 py-3 min-w-[170px] transition-all duration-200
         flex flex-col items-center justify-center cursor-pointer
-        hover:shadow-xl hover:border-blue-400
-         focus-within:ring-2 focus-within:ring-blue-200
+        hover:shadow-xl
+        focus-within:ring-2 focus-within:ring-blue-200
       `}
       onDoubleClick={handleDoubleClick}
     >

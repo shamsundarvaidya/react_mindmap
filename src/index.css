@@ -5,3 +5,9 @@
     stroke-dashoffset: -1000;
   }
 }
+
+@keyframes glow-pulse {
+  0% { box-shadow: 0 0 0 4px var(--glow-color), 0 0 16px 4px var(--glow-color); }
+  50% { box-shadow: 0 0 0 6px var(--glow-color), 0 0 28px 10px var(--glow-color); }
+  100% { box-shadow: 0 0 0 4px var(--glow-color), 0 0 16px 4px var(--glow-color); }
+}

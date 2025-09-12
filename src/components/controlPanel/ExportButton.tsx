@@ -33,7 +33,7 @@ const ExportButton: React.FC<ExportButtonProps> = ({ variant = "default", classN
   return (
     <button className={btnClass} onClick={handleDownload}>
       <span className="text-lg">⬇️</span>
-      <span>Export JSON</span>
+      <span>Download JSON</span>
     </button>
   );
 };
