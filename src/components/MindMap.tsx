@@ -23,6 +23,7 @@ import * as htmlToImage from "html-to-image";
 import "@xyflow/react/dist/style.css";
 import type { NodeData } from "../types/mindmap";
 import { setExportHandler } from "../store/exportStore";
+import ReactDOM from "react-dom";
 
 const nodeTypes = {
   customNode: CustomNode,
@@ -137,9 +138,12 @@ const MindMap = () => {
     };
   }, []);
 
+  const [modal, setModal] = useState<React.ReactNode>(null);
+
   return (
     <div className="h-screen flex flex-col" ref={containerRef}>
-      <ControlPanel />
+      <ControlPanel renderModal={setModal} />
+      {modal && ReactDOM.createPortal(modal, document.body)}
       <div className="flex-1">
         <ReactFlow
           ref={flowRef}

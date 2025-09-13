@@ -8,7 +8,8 @@ import ImportButton from "./controlPanel/ImportButton";
 import ExportButton from "./controlPanel/ExportButton";
 import ExportPngButton from "./controlPanel/ExportToPngButton";
 
-const ControlPanel = () => {
+
+const ControlPanel = ({ renderModal }: { renderModal?: ((modal: React.ReactNode) => void) | undefined }) => {
   const dispatch = useAppDispatch();
   const { selectedNodeId, edges, nodes } = useAppSelector((state) => state.mindmap);
 
@@ -321,7 +322,8 @@ const ControlPanel = () => {
       </div>
 
       <div className="flex items-center gap-3">
-      <NodeButtons
+      <NodeButtons 
+        renderModal={renderModal} 
           onAdd={() => {
             dispatch(addNode());
             dispatch(applyLayout("None"));
@@ -329,7 +331,9 @@ const ControlPanel = () => {
         onDelete={handleDelete}
         canAdd={!!selectedNodeId}
         canDelete={!!selectedNodeId}
+        canNote={!!selectedNodeId}
       />
+      
       </div>
     </div>
   );
