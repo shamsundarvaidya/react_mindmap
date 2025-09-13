@@ -138,12 +138,12 @@ const MindMap = () => {
     };
   }, []);
 
-  const [modal, setModal] = useState<React.ReactNode>(null);
+
 
   return (
     <div className="h-screen flex flex-col" ref={containerRef}>
-      <ControlPanel renderModal={setModal} />
-      {modal && ReactDOM.createPortal(modal, document.body)}
+      <ControlPanel  />
+     
       <div className="flex-1">
         <ReactFlow
           ref={flowRef}

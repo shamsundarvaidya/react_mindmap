@@ -7,10 +7,10 @@ interface NodeButtonsProps {
   canAdd: boolean;
   canDelete: boolean;
   canNote: boolean;
-  renderModal : { renderModal?: ((modal: React.ReactNode) => void) | undefined }
+  
 }
 
-const NodeButtons: React.FC<NodeButtonsProps> = ({ onAdd, onDelete, canAdd, canDelete, canNote,renderModal }) => (
+const NodeButtons: React.FC<NodeButtonsProps> = ({ onAdd, onDelete, canAdd, canDelete, canNote }) => (
   <div className="flex gap-2.5">
     <button
       className="inline-flex items-center gap-1.5 bg-teal-600 text-white px-3 py-1.5 rounded-lg shadow-sm hover:bg-teal-700 active:bg-teal-800 text-sm transition disabled:opacity-50"
@@ -28,7 +28,7 @@ const NodeButtons: React.FC<NodeButtonsProps> = ({ onAdd, onDelete, canAdd, canD
       <span className="text-base">🗑️</span>
       <span>Delete</span>
     </button>
-    <AddNoteButton renderModal={renderModal}  />
+    <AddNoteButton />
   </div>
 );
 

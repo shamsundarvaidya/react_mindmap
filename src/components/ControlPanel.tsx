@@ -9,7 +9,7 @@ import ExportButton from "./controlPanel/ExportButton";
 import ExportPngButton from "./controlPanel/ExportToPngButton";
 
 
-const ControlPanel = ({ renderModal }: { renderModal?: ((modal: React.ReactNode) => void) | undefined }) => {
+const ControlPanel = () => {
   const dispatch = useAppDispatch();
   const { selectedNodeId, edges, nodes } = useAppSelector((state) => state.mindmap);
 
@@ -323,7 +323,7 @@ const ControlPanel = ({ renderModal }: { renderModal?: ((modal: React.ReactNode)
 
       <div className="flex items-center gap-3">
       <NodeButtons 
-        renderModal={renderModal} 
+       
           onAdd={() => {
             dispatch(addNode());
             dispatch(applyLayout("None"));
