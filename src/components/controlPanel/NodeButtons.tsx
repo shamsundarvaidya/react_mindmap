@@ -6,11 +6,11 @@ interface NodeButtonsProps {
   onDelete: () => void;
   canAdd: boolean;
   canDelete: boolean;
-  canNote: boolean;
+  
   
 }
 
-const NodeButtons: React.FC<NodeButtonsProps> = ({ onAdd, onDelete, canAdd, canDelete, canNote }) => (
+const NodeButtons: React.FC<NodeButtonsProps> = ({ onAdd, onDelete, canAdd, canDelete }) => (
   <div className="flex gap-2.5">
     <button
       className="inline-flex items-center gap-1.5 bg-teal-600 text-white px-3 py-1.5 rounded-lg shadow-sm hover:bg-teal-700 active:bg-teal-800 text-sm transition disabled:opacity-50"

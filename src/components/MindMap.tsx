@@ -12,18 +12,18 @@ import {
   ReactFlow,
   Background,
   Controls,
-  MiniMap,
+ 
   type NodeChange,
   type EdgeChange,
   type Node,
-  type ReactFlowInstance,
+  
 } from "@xyflow/react";
 import * as htmlToImage from "html-to-image";
 
 import "@xyflow/react/dist/style.css";
 import type { NodeData } from "../types/mindmap";
 import { setExportHandler } from "../store/exportStore";
-import ReactDOM from "react-dom";
+
 
 const nodeTypes = {
   customNode: CustomNode,
@@ -93,6 +93,7 @@ const MindMap = () => {
   const onNodeClick = useCallback(
     (event: React.MouseEvent, node: Node) => {
       dispatch(selectNode(node.id));
+      event.stopPropagation();
     },
     [dispatch]
   );

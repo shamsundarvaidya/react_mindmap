@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import { addNode, deleteNode, applyLayout, updateColor } from "../store/mindmapSlice";
 import NodeButtons from "./controlPanel/NodeButtons";
@@ -331,7 +331,7 @@ const ControlPanel = () => {
         onDelete={handleDelete}
         canAdd={!!selectedNodeId}
         canDelete={!!selectedNodeId}
-        canNote={!!selectedNodeId}
+        
       />
       
       </div>
