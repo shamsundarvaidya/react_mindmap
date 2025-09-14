@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import { addNode, deleteNode, applyLayout, updateColor } from "../store/mindmapSlice";
-import NodeButtons from "./controlPanel/NodeButtons";
+import NodeActionButtons from "./controlPanel/NodeActionButtons";
 import ClearButton from "./controlPanel/ClearButton";
 import SaveButton from "./controlPanel/SaveButton";
 import ImportButton from "./controlPanel/ImportButton";
@@ -110,24 +110,7 @@ const ControlPanel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [nodes.length, edges.length]);
 
-  const isRootNode = (id: string) => {
-    return !edges.some((e) => e.target === id);
-  };
 
-  const handleDelete = () => {
-    if (!selectedNodeId) return;
-    if (isRootNode(selectedNodeId)) {
-      alert("Cannot delete the root node.");
-      return;
-    }
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this node and all its children?"
-    );
-    if (confirmed) {
-      dispatch(deleteNode(selectedNodeId));
-      dispatch(applyLayout("None"));
-    }
-  };
 
   return (
     <div className="px-4 py-2 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-200 flex items-center justify-between shadow-sm z-50 relative">
@@ -309,7 +292,8 @@ const ControlPanel = () => {
               <button
                 className="w-full inline-flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 text-slate-700 text-sm"
                 onClick={() => {
-                  nodes.forEach((n) => dispatch(updateColor({ id: n.id, color: "#ffffff" })));
+                  nodes.forEach((n) => dispatch(updateColor({ id: n.id, color: "#D3D3D3" })));
+                  
                   setThemeOpen(false);
                 }}
               >
@@ -321,19 +305,9 @@ const ControlPanel = () => {
         </div>
       </div>
 
+      {/* Right side buttons */}
       <div className="flex items-center gap-3">
-      <NodeButtons 
-       
-          onAdd={() => {
-            dispatch(addNode());
-            dispatch(applyLayout("None"));
-          }}
-        onDelete={handleDelete}
-        canAdd={!!selectedNodeId}
-        canDelete={!!selectedNodeId}
-        
-      />
-      
+      <NodeActionButtons />     
       </div>
     </div>
   );
