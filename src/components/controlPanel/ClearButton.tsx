@@ -13,11 +13,11 @@ const ClearButton: React.FC<ClearButtonProps> = ({ variant = "default", classNam
   const handleClear = () => {
     if (confirm("Clear the entire mind map?")) {
       dispatch(clear());
-      try {
-        const defaultBg = '#0B1220';
-        localStorage.setItem('canvas-bg', defaultBg);
-        window.dispatchEvent(new CustomEvent('canvas-bg-change', { detail: { color: defaultBg } }));
-      } catch {}
+      // try {
+      //   const defaultBg = '#0B1220';
+      //   localStorage.setItem('canvas-bg', defaultBg);
+      //   window.dispatchEvent(new CustomEvent('canvas-bg-change', { detail: { color: defaultBg } }));
+      // } catch {}
     }
   };
 

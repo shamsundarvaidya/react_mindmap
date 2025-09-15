@@ -1,5 +1,25 @@
 @import "tailwindcss";
 
+@layer base {
+  ul {
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  ol {
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  li {
+    margin-bottom: 0.25rem;
+  }
+}
+
 @keyframes dash {
   to {
     stroke-dashoffset: -1000;

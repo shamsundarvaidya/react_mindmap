@@ -17,6 +17,7 @@ export function updateNodeColor(
   state: MindMapState,
   action: PayloadAction<{ id: string; color: string }>
 ) {
+  
   const node = state.nodes.find((n: Node<NodeData>) => n.id === action.payload.id);
   if (node) {
     node.data = {
@@ -24,4 +25,19 @@ export function updateNodeColor(
       color: action.payload.color,
     };
   }
+}
+
+type UpdateNodeNotePayload = { nodeId: string; note: string };
+
+export function updateNodeNote(
+  state: MindMapState,
+  action: PayloadAction<UpdateNodeNotePayload>
+){
+  const { nodeId, note } = action.payload;
+  
+  
+      const node = state.nodes.find((n: Node<NodeData>) => n.id === nodeId);
+      if (node) {
+        node.data.note = note
+      }
 }

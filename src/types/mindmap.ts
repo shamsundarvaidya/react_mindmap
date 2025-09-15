@@ -4,7 +4,10 @@ import type { Node, Edge } from '@xyflow/react';
 export interface NodeData extends Record<string, unknown> {
   label: string;
   color?: string;
+  note?: string; 
 }
+
+
 
 
 
