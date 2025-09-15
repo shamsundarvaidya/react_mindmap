@@ -1,6 +1,6 @@
 import React from "react";
-import { useAppDispatch } from "../../store";
-import { saveMindMap } from "../../store/mindmapSlice";
+import { useAppDispatch } from "../../../store";
+import { saveMindMap } from "../../../store/mindmapSlice";
 
 interface SaveButtonProps {
   variant?: "default" | "menu";

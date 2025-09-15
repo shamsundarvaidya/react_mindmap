@@ -1,7 +1,7 @@
 import React from 'react';
 import { useReactFlow, getNodesBounds } from '@xyflow/react';
-import { useAppDispatch, useAppSelector } from '../../store';
-import { selectNode } from '../../store/mindmapSlice';
+import { useAppDispatch, useAppSelector } from '../../../store';
+import { selectNode } from '../../../store/mindmapSlice';
 import { toPng } from 'html-to-image';
 
 interface ExportToPngButtonProps {

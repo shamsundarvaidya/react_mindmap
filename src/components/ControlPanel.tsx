@@ -3,17 +3,13 @@ import { useAppDispatch, useAppSelector } from "../store";
 import { addNode, deleteNode, applyLayout, updateColor } from "../store/mindmapSlice";
 import NodeActionButtons from "./controlPanel/NodeActionButtons";
 import ClearButton from "./controlPanel/ClearButton";
-import SaveButton from "./controlPanel/SaveButton";
-import ImportButton from "./controlPanel/ImportButton";
-import ExportButton from "./controlPanel/ExportButton";
-import ExportPngButton from "./controlPanel/ExportToPngButton";
+import FileMenu from "./controlPanel/FileMenu";
 
 
 const ControlPanel = () => {
   const dispatch = useAppDispatch();
   const { selectedNodeId, edges, nodes } = useAppSelector((state) => state.mindmap);
 
-  const [fileOpen, setFileOpen] = useState(false);
   const [layoutOpen, setLayoutOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
   
@@ -26,7 +22,6 @@ const ControlPanel = () => {
   const [currentSchemeName, setCurrentSchemeName] = useState<string | null>(() => {
     return localStorage.getItem('node-color-scheme');
   });
-  const fileMenuRef = useRef<HTMLDivElement | null>(null);
   const layoutMenuRef = useRef<HTMLDivElement | null>(null);
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
   const [edgesAnimated, setEdgesAnimated] = useState<boolean>(() => {
@@ -37,9 +32,6 @@ const ControlPanel = () => {
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (fileMenuRef.current && !fileMenuRef.current.contains(target)) {
-        setFileOpen(false);
-      }
       if (layoutMenuRef.current && !layoutMenuRef.current.contains(target)) {
         setLayoutOpen(false);
       }
@@ -117,42 +109,13 @@ const ControlPanel = () => {
       <div className="flex items-center gap-3">
         <div className="text-slate-800 font-semibold tracking-wide select-none">mind map</div>
 
-        <div className="relative" ref={fileMenuRef}>
-          <button
-            className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 text-sm"
-            onClick={() => {
-              setFileOpen((v) => !v);
-              setLayoutOpen(false);
-              setThemeOpen(false);
-            }}
-          >
-            File ▾
-          </button>
-          {fileOpen && (
-            <div className="absolute mt-1 left-0 w-56 bg-white border border-slate-200 rounded-md shadow-lg p-1 z-50">
-              <div onClick={() => setFileOpen(false)}>
-                <SaveButton variant="menu" />
-              </div>
-              <div onClick={() => setFileOpen(false)}>
-                <ExportButton variant="menu" />
-              </div>
-              <div onClick={() => setFileOpen(false)}>
-                <ExportPngButton variant="menu" />
-              </div>
-              <div>
-                <ImportButton variant="menu" onComplete={() => setFileOpen(false)} />
-              </div>
-            </div>
-          )}
-        </div>
+        <FileMenu />
 
         <div className="relative" ref={layoutMenuRef}>
           <button
             className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 text-sm"
             onClick={() => {
               setLayoutOpen((v) => !v);
-              setFileOpen(false);
-              setThemeOpen(false);
             }}
           >
             Layout ▾
@@ -191,8 +154,6 @@ const ControlPanel = () => {
             className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 text-sm"
             onClick={() => {
               setThemeOpen((v) => !v);
-              setFileOpen(false);
-              setLayoutOpen(false);
             }}
           >
             Theme ▾
