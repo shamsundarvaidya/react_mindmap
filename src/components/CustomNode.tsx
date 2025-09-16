@@ -7,6 +7,7 @@ import type { NodeData } from '../types/mindmap';
 const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
   const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
   const selectedNodeId = useAppSelector((state) => state.mindmap.selectedNodeId);
+  const showNoteIndicator = useAppSelector((state) => state.appSettings?.showNoteIndicator);
   const dispatch = useAppDispatch();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(data.label);
@@ -86,6 +87,7 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
         // CSS variable used by the glow animation
         ['--glow-color' as any]: glowColor,
         animation: isSelected ? 'glow-pulse 1.2s ease-in-out infinite' : undefined,
+        position: 'relative',
       }}
       className={`
         border rounded-xl shadow-lg px-5 py-3 min-w-[170px] transition-all duration-200
@@ -96,6 +98,31 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
       onDoubleClick={handleDoubleClick}
     >
       <Handle type="target" position={targetPosition} className="!w-2 !h-2 !bg-gray-400" />
+      {/* Note indicator */}
+      {showNoteIndicator && data.note && data.note.trim() !== '' && (
+        <span
+          title="Note present"
+          style={{
+            position: 'absolute',
+            top: 6,
+            right: 10,
+            background: '#fbbf24',
+            color: '#fff',
+            borderRadius: '50%',
+            width: 18,
+            height: 18,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 13,
+            fontWeight: 700,
+            boxShadow: '0 1px 4px rgba(0,0,0,0.10)',
+            zIndex: 2,
+          }}
+        >
+          📝
+        </span>
+      )}
       {editing ? (
         <input
           ref={inputRef}

@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
 import { addNode, deleteNode, applyLayout, updateColor } from "../store/mindmapSlice";
-import NodeActionButtons from "./controlPanel/NodeActionButtons";
-import ClearButton from "./controlPanel/ClearButton";
+import NodeMenu from "./controlPanel/NodeMenu";
+import ClearButton from "./controlPanel/fileActions/ClearButton";
 import FileMenu from "./controlPanel/FileMenu";
+import SettingsMenu from "./controlPanel/SettingsMenu";
 
 
 const ControlPanel = () => {
@@ -111,43 +112,7 @@ const ControlPanel = () => {
 
         <FileMenu />
 
-        <div className="relative" ref={layoutMenuRef}>
-          <button
-            className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 text-sm"
-            onClick={() => {
-              setLayoutOpen((v) => !v);
-            }}
-          >
-            Layout ▾
-          </button>
-          {layoutOpen && (
-            <div className="absolute mt-1 left-0 w-56 bg-white border border-slate-200 rounded-md shadow-lg p-1 z-50">
-              <button
-                className="w-full inline-flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 text-slate-700 text-sm"
-                onClick={() => {
-                  dispatch(applyLayout("LR"));
-                  setLayoutOpen(false);
-                }}
-              >
-                <span className="text-lg">➡️</span>
-                <span>Horizontal layout</span>
-              </button>
-              <button
-                className="w-full inline-flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 text-slate-700 text-sm"
-                onClick={() => {
-                  dispatch(applyLayout("TB"));
-                  setLayoutOpen(false);
-                }}
-              >
-                <span className="text-lg">⬇️</span>
-                <span>Vertical layout</span>
-              </button>
-              <div onClick={() => setLayoutOpen(false)}>
-                <ClearButton variant="menu" />
-              </div>
-            </div>
-          )}
-        </div>
+        <SettingsMenu />
 
         <div className="relative" ref={themeMenuRef}>
           <button
@@ -268,7 +233,7 @@ const ControlPanel = () => {
 
       {/* Right side buttons */}
       <div className="flex items-center gap-3">
-      <NodeActionButtons />     
+      <NodeMenu />     
       </div>
     </div>
   );

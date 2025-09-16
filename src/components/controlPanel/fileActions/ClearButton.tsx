@@ -1,6 +1,6 @@
 import React from "react";
-import { useAppDispatch } from "../../store";
-import { clear } from "../../store/mindmapSlice";
+import { useAppDispatch } from "../../../store";
+import { clear } from "../../../store/mindmapSlice";
 
 interface ClearButtonProps {
   variant?: "default" | "menu";

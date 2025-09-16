@@ -3,7 +3,8 @@ import { useAppSelector } from "../../store";
 import SaveButton from "./fileActions/SaveButton";
 import ExportButton from "./fileActions/ExportButton";
 import ExportPngButton from "./fileActions/ExportToPngButton";
-import ImportButton from "./ImportButton";
+import ImportButton from "./fileActions/ImportButton";
+import ClearButton from "./fileActions/ClearButton";
 
 const FileMenu = () => {
   const [open, setOpen] = useState(false);
@@ -62,6 +63,9 @@ const FileMenu = () => {
           </div>
           <div>
             <ImportButton variant="menu" onComplete={() => setOpen(false)} />
+          </div>
+          <div onClick={() => setOpen(false)}>
+            <ClearButton variant="menu" />
           </div>
         </div>
       )}

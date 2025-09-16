@@ -1,6 +1,6 @@
 import React, { type ChangeEvent } from "react";
-import { useAppDispatch } from "../../store";
-import { loadMindMap } from "../../store/mindmapSlice";
+import { useAppDispatch } from "../../../store";
+import { loadMindMap } from "../../../store/mindmapSlice";
 
 interface ImportButtonProps {
   variant?: "default" | "menu";

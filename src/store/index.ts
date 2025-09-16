@@ -1,12 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { type TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux';
 import mindmapReducer  from './mindmapSlice';
+import appSettingsReducer from './appSettingsSlice';
 
 
 export const store = configureStore({
   reducer: {
     mindmap: mindmapReducer,
-    
+    appSettings: appSettingsReducer,
   },
 });
 
