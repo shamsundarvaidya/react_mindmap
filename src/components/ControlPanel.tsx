@@ -62,7 +62,8 @@ const ControlPanel = () => {
     const adjacency = new Map<string, string[]>();
     nodes.forEach((n) => adjacency.set(n.id, []));
     edges.forEach((e) => {
-      adjacency.get(e.source)!.push(e.target);
+      const arr = adjacency.get(e.source);
+      if (arr) arr.push(e.target);
     });
     const depthMap = new Map<string, number>();
     const queue: Array<{ id: string; depth: number }> = roots.map((r) => ({ id: r, depth: 0 }));

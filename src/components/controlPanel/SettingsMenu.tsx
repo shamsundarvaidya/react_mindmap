@@ -2,6 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import NoteIndicatorToggle from "./settingActions/NoteIndicatorToggle";
 import LayoutHorizontalButton from "./settingActions/LayoutHorizontalButton";
 import LayoutVerticalButton from "./settingActions/LayoutVerticalButton";
+import LayoutRadialButton from "./settingActions/LayoutRadialButton";
 
 const SettingsMenu = () => {
   const [open, setOpen] = useState(false);
@@ -35,6 +36,7 @@ const SettingsMenu = () => {
           <div className="px-3 pb-2 flex flex-col gap-0">
             <LayoutHorizontalButton onClick={() => setOpen(false)} />
             <LayoutVerticalButton onClick={() => setOpen(false)} />
+            <LayoutRadialButton onClick={() => setOpen(false)} />
           </div>
         </div>
       )}

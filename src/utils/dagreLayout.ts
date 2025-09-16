@@ -4,9 +4,6 @@ import type { NodeData } from '../types/mindmap';
 import { getNodeSize } from './nodeHelper';
 
 
-
-
-
 export function getDagreLayoutedElements(
   nodes: Node<NodeData>[],
   edges: Edge[],

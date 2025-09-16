@@ -42,7 +42,9 @@ const MindMap = () => {
 
   const nodesById = useMemo(() => {
     const map = new Map<string, Node<NodeData>>();
-    nodes.forEach((n) => map.set(n.id, n as Node<NodeData>));
+    if (Array.isArray(nodes)) {
+      nodes.forEach((n) => map.set(n.id, n as Node<NodeData>));
+    }
     return map;
   }, [nodes]);
 

@@ -15,7 +15,7 @@ export interface MindMapState {
   nodes: Node<NodeData>[];
   edges: Edge[];
   selectedNodeId: string | null;
-  layoutDirection: 'LR' | 'TB';
+  layoutDirection: 'LR' | 'TB' | 'RADIAL';
 }
 
 export type AddNodeType = 'child' | 'sibling';

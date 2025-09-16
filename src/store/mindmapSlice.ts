@@ -4,7 +4,7 @@ import { selectNodeInMap, applyNodeChangesAction } from "./reducers/nodeReducers
 import { applyEdgeChangesAction } from "./reducers/edgeReducers";
 import { deleteNodeAndDescendants } from "./reducers/deleteReducers";
 import { addChildNodeToMap, addSiblingNodeToMap } from "./reducers/addNodeReducers";
-import { applyLayoutWithDirectionToMap } from "./reducers/layoutReducers";
+import { applyLayoutToMap } from "./reducers/layoutReducers";
 import { updateNodeLabel, updateNodeColor,updateNodeNote } from "./reducers/updateReducers";
 import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } from "./reducers/storageReducers";
 
@@ -24,7 +24,7 @@ import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } 
     updateNodeLabel,
     clearMindMap,
     saveMindMapToLocalStorage,
-    applyLayoutWithDirectionToMap,
+    applyLayoutToMap,
     loadMindMapFromLocalStorage,
     updateNodeNote
   },
@@ -43,7 +43,7 @@ export const {
   updateNodeLabel: updateLabel,
   clearMindMap: clear,
   saveMindMapToLocalStorage: saveMindMap,
-  applyLayoutWithDirectionToMap: applyLayout,
+  applyLayoutToMap: applyLayout,
   loadMindMapFromLocalStorage: loadMindMap,
   updateNodeNote: updateNote
 
