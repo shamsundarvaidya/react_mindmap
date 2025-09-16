@@ -11,6 +11,8 @@ function getParentMap(edges: Edge[]): Map<string, string> {
   edges.forEach(e => {
     parentMap.set(e.target, e.source);
   });
+  console.log('[RadialLayout] parentMap:', parentMap);
+  console.log(typeof parentMap);
   return parentMap;
 }
 
@@ -20,27 +22,23 @@ export function applyRadialLayoutD3(nodes: Node<NodeData>[], edges: Edge[]): { n
   // Deduce parentId for each node using edges
   const parentMap = getParentMap(edges);
 
-  // Build a map for quick lookup
-  type TreeNode = Node<NodeData> & { children: TreeNode[] };
-  const nodeMap = new Map<string, TreeNode>(
-    nodes.map(n => [n.id, { ...n, children: [] } as TreeNode])
-  );
-  let root: TreeNode | null = null;
 
+  // Build a map for quick lookup and tree construction
+  type TreeNode = Node<NodeData> & { children: TreeNode[] };
+  const nodeMap = new Map<string, TreeNode>();
+  nodes.forEach(n => {
+    nodeMap.set(n.id, { ...n, children: [] });
+  });
+
+  let root: TreeNode | null = null;
   nodes.forEach(node => {
+    const treeNode = nodeMap.get(node.id)!;
     const parentId = parentMap.get(node.id);
     if (parentId) {
       const parent = nodeMap.get(parentId);
-      const child = nodeMap.get(node.id);
-      if (parent && child) {
-        parent.children.push(child);
-      }
+      if (parent) parent.children.push(treeNode);
     } else {
-      // No parentId means this is a root
-      const maybeRoot = nodeMap.get(node.id);
-      if (maybeRoot) {
-        root = maybeRoot;
-      }
+      root = treeNode;
     }
   });
 
@@ -94,6 +92,7 @@ export function applyRadialLayoutD3(nodes: Node<NodeData>[], edges: Edge[]): { n
   // Update edges to match new node positions (if needed by your renderer)
   // Here, just return the same edges array, but you could recompute edge paths if needed
 
-  console.debug('[RadialLayout] All positioned nodes:', positioned);
+  console.log('[RadialLayout] All positioned nodes:', positioned);
+  console.log('[RadialLayout] Edges:', edges);
   return { nodes: positioned, edges };
 }
