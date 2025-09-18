@@ -16,7 +16,10 @@ function getParentMap(edges: Edge[]): Map<string, string> {
   return parentMap;
 }
 
-export function applyRadialLayoutD3(nodes: Node<NodeData>[], edges: Edge[]): { nodes: Node<NodeData>[]; edges: Edge[] } {
+export function applyRadialLayoutD3(
+  nodes: Node<NodeData>[],
+  edges: Edge[]
+): Record<string, { position: { x: number; y: number }; sourcePosition: string; targetPosition: string }> {
 
 
   // Deduce parentId for each node using edges
@@ -47,8 +50,8 @@ export function applyRadialLayoutD3(nodes: Node<NodeData>[], edges: Edge[]): { n
 
 
   if (!root) {
-    console.warn('[RadialLayout] No root node found. Returning original nodes.');
-    return { nodes, edges };
+    console.warn('[RadialLayout] No root node found. Returning empty positions.');
+    return {};
   }
 
 
@@ -69,30 +72,23 @@ export function applyRadialLayoutD3(nodes: Node<NodeData>[], edges: Edge[]): { n
   layout(rootHierarchy);
   console.debug('[RadialLayout] After layout:', rootHierarchy);
 
-  // Map positions back to nodes
-  const positioned: Node<NodeData>[] = [];
+  // Map positions back to a record of nodeId -> position and port positions
+  const positions: Record<string, { position: { x: number; y: number }; sourcePosition: string; targetPosition: string }> = {};
   rootHierarchy.each((d: HierarchyNode<TreeNode>) => {
     const { x, y } = d;
     if (typeof x === 'number' && typeof y === 'number') {
       // Convert polar to cartesian
       const r = y;
       const angle = x - Math.PI / 2;
-      const pos = {
-        ...d.data,
+      positions[d.data.id] = {
         position: {
           x: 400 + r * Math.cos(angle), // 400,300 is center
           y: 300 + r * Math.sin(angle),
         },
+        sourcePosition: 'right', // or another default, can be improved
+        targetPosition: 'left',
       };
-      console.debug('[RadialLayout] Node:', pos);
-      positioned.push(pos);
     }
   });
-
-  // Update edges to match new node positions (if needed by your renderer)
-  // Here, just return the same edges array, but you could recompute edge paths if needed
-
-  console.log('[RadialLayout] All positioned nodes:', positioned);
-  console.log('[RadialLayout] Edges:', edges);
-  return { nodes: positioned, edges };
+  return positions;
 }

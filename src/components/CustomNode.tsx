@@ -13,12 +13,31 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
   const [value, setValue] = useState(data.label);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const sourcePosition = layoutDirection === 'TB' ? Position.Bottom : Position.Right;
-  const targetPosition = layoutDirection === 'TB' ? Position.Top : Position.Left;
+
+  // For radial layout, use circular node and center label, and ports on left/right
+  const isRadial = layoutDirection === 'RADIAL';
+  const sourcePosition = isRadial
+    ? Position.Right
+    : layoutDirection === 'TB'
+      ? Position.Bottom
+      : Position.Right;
+  const targetPosition = isRadial
+    ? Position.Left
+    : layoutDirection === 'TB'
+      ? Position.Top
+      : Position.Left;
+
 
 
   const backgroundColor = (data.color as string) || '#ffffff';
   const isSelected = id === selectedNodeId;
+
+  // For radial, calculate node size based on label length
+  const baseDiameter = 60;
+  const labelLength = data.label ? data.label.length : 1;
+  const diameter = isRadial
+    ? Math.max(baseDiameter, 18 * Math.ceil(labelLength / 5) + 24)
+    : undefined;
 
   // Helpers to derive theme-matching highlight colors
   const hexToRgb = (hex: string) => {
@@ -84,20 +103,41 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
         borderColor: highlightBorder,
         borderWidth: isSelected ? 2 : 1,
         boxShadow: highlightRing,
-        // CSS variable used by the glow animation
         ['--glow-color' as any]: glowColor,
         animation: isSelected ? 'glow-pulse 1.2s ease-in-out infinite' : undefined,
         position: 'relative',
+        ...(isRadial
+          ? {
+              width: diameter,
+              height: diameter,
+              minWidth: diameter,
+              minHeight: diameter,
+              maxWidth: diameter,
+              maxHeight: diameter,
+              borderRadius: '50%',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              overflow: 'hidden',
+            }
+          : {})
       }}
       className={`
-        border rounded-xl shadow-lg px-5 py-3 min-w-[170px] transition-all duration-200
+        border ${isRadial ? '' : 'rounded-xl px-5 py-3 min-w-[170px]'} shadow-lg transition-all duration-200
         flex flex-col items-center justify-center cursor-pointer
         hover:shadow-xl
         focus-within:ring-2 focus-within:ring-blue-200
       `}
       onDoubleClick={handleDoubleClick}
     >
-      <Handle type="target" position={targetPosition} className="!w-2 !h-2 !bg-gray-400" />
+      <Handle
+        type="target"
+        position={targetPosition}
+        className="!w-2 !h-2 !bg-gray-400"
+        style={isRadial ? { top: '50%', left: 0, transform: 'translateY(-50%)' } : {}}
+      />
       {/* Note indicator */}
       {showNoteIndicator && data.note && data.note.trim() !== '' && (
         <span
@@ -130,12 +170,23 @@ const CustomNode: React.FC<NodeProps<Node<NodeData>>> = ({ id, data }) => {
           onChange={(e) => setValue(e.target.value)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          className="w-full border border-blue-200 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition"
+          className={`w-full border border-blue-200 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300 transition ${isRadial ? 'text-center' : ''}`}
+          style={isRadial ? { background: 'transparent', textAlign: 'center' } : {}}
         />
       ) : (
-        <div className="font-semibold text-base text-gray-800 truncate">{data.label}</div>
+        <div
+          className={`font-semibold text-base text-gray-800 ${isRadial ? '' : 'truncate'}`}
+          style={isRadial ? { width: '100%', textAlign: 'center', wordBreak: 'break-word', whiteSpace: 'normal', padding: '0 6px' } : {}}
+        >
+          {data.label}
+        </div>
       )}
-      <Handle type="source" position={sourcePosition} className="!w-2 !h-2 !bg-gray-400" />
+      <Handle
+        type="source"
+        position={sourcePosition}
+        className="!w-2 !h-2 !bg-gray-400"
+        style={isRadial ? { top: '50%', right: 0, transform: 'translateY(-50%)' } : {}}
+      />
     </div>
   );
 };
