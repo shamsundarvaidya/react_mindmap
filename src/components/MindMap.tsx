@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { useAppSelector, useAppDispatch } from "../store";
 import {
   selectNode,
@@ -29,12 +29,10 @@ const nodeTypes = {
 
 const MindMap = () => {
   const { nodes, edges } = useAppSelector((state) => state.mindmap);
+  const { canvasBg, edgesAnimated } = useAppSelector(state => state.appSettings);
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const [edgesAnimated, setEdgesAnimated] = useState<boolean>(() => {
-    const saved = localStorage.getItem('edges-animated');
-    return saved ? saved === 'true' : true;
-  });
+  // edgesAnimated now from store
 
   const dispatch = useAppDispatch();
 
@@ -128,36 +126,13 @@ const MindMap = () => {
         console.warn("Invalid mind map data in localStorage.");
       }
     }
+  }, [dispatch]);
 
-    // Apply canvas background from localStorage or default
-    const savedBg = localStorage.getItem('canvas-bg');
-    const defaultBg = '#0B1220'; // deeper near-black for stronger contrast
-    const shouldMigrate = !savedBg || savedBg === '#0F172A' || savedBg === '#ffffff';
-    const colorToUse = shouldMigrate ? defaultBg : (savedBg as string);
+  useEffect(() => {
     if (containerRef.current) {
-      containerRef.current.style.backgroundColor = colorToUse;
+      containerRef.current.style.backgroundColor = canvasBg;
     }
-    if (shouldMigrate) {
-      localStorage.setItem('canvas-bg', defaultBg);
-    }
-
-    const onBgChange = (e: Event) => {
-      const detail = (e as CustomEvent).detail as { color: string };
-      if (containerRef.current) {
-        containerRef.current.style.backgroundColor = detail.color;
-      }
-    };
-    window.addEventListener('canvas-bg-change', onBgChange as EventListener);
-    const onEdgesAnimChange = (e: Event) => {
-      const detail = (e as CustomEvent).detail as { animated: boolean };
-      setEdgesAnimated(detail.animated);
-    };
-    window.addEventListener('edges-animated-change', onEdgesAnimChange as EventListener);
-    return () => {
-      window.removeEventListener('canvas-bg-change', onBgChange as EventListener);
-      window.removeEventListener('edges-animated-change', onEdgesAnimChange as EventListener);
-    };
-  }, []);
+  }, [canvasBg]);
 
 
 

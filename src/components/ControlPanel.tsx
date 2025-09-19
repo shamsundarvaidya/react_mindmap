@@ -1,41 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../store";
-import { addNode, deleteNode, applyLayout, updateColor } from "../store/mindmapSlice";
+import { updateColor } from "../store/mindmapSlice";
+import { setCanvasBg, setEdgesAnimated, applyColorScheme, setColorScheme } from '../store/appSettingsSlice';
 import NodeMenu from "./controlPanel/NodeMenu";
-import ClearButton from "./controlPanel/fileActions/ClearButton";
 import FileMenu from "./controlPanel/FileMenu";
 import SettingsMenu from "./controlPanel/SettingsMenu";
 
 
 const ControlPanel = () => {
   const dispatch = useAppDispatch();
-  const { selectedNodeId, edges, nodes } = useAppSelector((state) => state.mindmap);
+  const { edges, nodes } = useAppSelector((state) => state.mindmap);
 
-  const [layoutOpen, setLayoutOpen] = useState(false);
   const [themeOpen, setThemeOpen] = useState(false);
-  
-  const setCanvasBackground = (color: string) => {
-    try {
-      localStorage.setItem('canvas-bg', color);
-      window.dispatchEvent(new CustomEvent('canvas-bg-change', { detail: { color } }));
-    } catch {}
-  };
-  const [currentSchemeName, setCurrentSchemeName] = useState<string | null>(() => {
-    return localStorage.getItem('node-color-scheme');
-  });
-  const layoutMenuRef = useRef<HTMLDivElement | null>(null);
+  const { edgesAnimated, colorScheme } = useAppSelector(s => s.appSettings);
   const themeMenuRef = useRef<HTMLDivElement | null>(null);
-  const [edgesAnimated, setEdgesAnimated] = useState<boolean>(() => {
-    const saved = localStorage.getItem('edges-animated');
-    return saved ? saved === 'true' : true;
-  });
+  // edgesAnimated now from store
 
   useEffect(() => {
     const handleDocumentClick = (e: MouseEvent) => {
       const target = e.target as Node;
-      if (layoutMenuRef.current && !layoutMenuRef.current.contains(target)) {
-        setLayoutOpen(false);
-      }
+      // layout menu removed / reserved
       if (themeMenuRef.current && !themeMenuRef.current.contains(target)) {
         setThemeOpen(false);
       }
@@ -45,64 +29,19 @@ const ControlPanel = () => {
   }, []);
 
   // Color scheme by node depth
-  const schemes: Record<string, string[]> = {
-    Pastel: ["#FFEEAD", "#AEDFF7", "#C3F7C0", "#F7C2E7", "#FFF1C1"],
-    Vibrant: ["#FF6B6B", "#4D96FF", "#6BCB77", "#FFD93D", "#845EC2"],
-    Blues: ["#DCEEFB", "#B6E0FE", "#84C5F4", "#62B0E8", "#3A8DDE"],
-    Sunset: ["#FFADAD", "#FFD6A5", "#FDFFB6", "#BDE0FE", "#A0C4FF"],
-  };
-
-  const computeDepths = (): Map<string, number> => {
-    const inDegree = new Map<string, number>();
-    nodes.forEach((n) => inDegree.set(n.id, 0));
-    edges.forEach((e) => {
-      inDegree.set(e.target, (inDegree.get(e.target) || 0) + 1);
-    });
-    const roots = nodes.filter((n) => (inDegree.get(n.id) || 0) === 0).map((n) => n.id);
-    const adjacency = new Map<string, string[]>();
-    nodes.forEach((n) => adjacency.set(n.id, []));
-    edges.forEach((e) => {
-      const arr = adjacency.get(e.source);
-      if (arr) arr.push(e.target);
-    });
-    const depthMap = new Map<string, number>();
-    const queue: Array<{ id: string; depth: number }> = roots.map((r) => ({ id: r, depth: 0 }));
-    while (queue.length) {
-      const { id, depth } = queue.shift()!;
-      if (depthMap.has(id)) continue;
-      depthMap.set(id, depth);
-      const children = adjacency.get(id) || [];
-      children.forEach((child) => queue.push({ id: child, depth: depth + 1 }));
-    }
-    // For any disconnected nodes not reached, set depth 0
-    nodes.forEach((n) => {
-      if (!depthMap.has(n.id)) depthMap.set(n.id, 0);
-    });
-    return depthMap;
-  };
+  // schemes & depth computations moved to thunk in store
 
   const applyScheme = (schemeName: string) => {
-    const palette = schemes[schemeName];
-    if (!palette) return;
-    const depths = computeDepths();
-    nodes.forEach((n) => {
-      const d = depths.get(n.id) || 0;
-      const color = palette[d % palette.length];
-      dispatch(updateColor({ id: n.id, color }));
-    });
-    // optionally re-layout neutral to avoid jumps
-    dispatch(applyLayout("None"));
-    setCurrentSchemeName(schemeName);
-    localStorage.setItem('node-color-scheme', schemeName);
+    dispatch(applyColorScheme(schemeName));
   };
 
   // Re-apply scheme when graph size changes so new nodes adopt colors
   useEffect(() => {
-    if (currentSchemeName) {
-      applyScheme(currentSchemeName);
+    if (colorScheme) {
+      dispatch(applyColorScheme(colorScheme));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [nodes.length, edges.length]);
+  }, [nodes.length, edges.length, colorScheme]);
 
 
 
@@ -175,7 +114,7 @@ const ControlPanel = () => {
                       title={opt.label}
                       className="h-6 w-6 rounded border border-slate-300 shadow-sm"
                       style={{ backgroundColor: opt.c }}
-                      onClick={() => { setCanvasBackground(opt.c); setThemeOpen(false); }}
+                      onClick={() => { dispatch(setCanvasBg(opt.c)); setThemeOpen(false); }}
                     />
                   ))}
                 </div>
@@ -197,7 +136,7 @@ const ControlPanel = () => {
                       title={opt.label}
                       className="h-6 w-6 rounded border border-slate-700 shadow-sm"
                       style={{ backgroundColor: opt.c }}
-                      onClick={() => { setCanvasBackground(opt.c); setThemeOpen(false); }}
+                      onClick={() => { dispatch(setCanvasBg(opt.c)); setThemeOpen(false); }}
                     />
                   ))}
                 </div>
@@ -209,9 +148,7 @@ const ControlPanel = () => {
                   checked={edgesAnimated}
                   onChange={(e) => {
                     const val = e.target.checked;
-                    setEdgesAnimated(val);
-                    localStorage.setItem('edges-animated', String(val));
-                    window.dispatchEvent(new CustomEvent('edges-animated-change', { detail: { animated: val } }));
+                    dispatch(setEdgesAnimated(val));
                   }}
                 />
                 Animate edges
@@ -220,7 +157,7 @@ const ControlPanel = () => {
                 className="w-full inline-flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 text-slate-700 text-sm"
                 onClick={() => {
                   nodes.forEach((n) => dispatch(updateColor({ id: n.id, color: "#D3D3D3" })));
-                  
+                  dispatch(setColorScheme(null));
                   setThemeOpen(false);
                 }}
               >
