@@ -59,21 +59,36 @@ export function applyRadialLayoutD3(
   const rootHierarchy = hierarchy<TreeNode>(root);
   console.debug('[RadialLayout] rootHierarchy:', rootHierarchy);
 
-  // Dynamically set radius based on node count for better spacing
-  const minRadius = 200;
-  const maxRadius = 400;
+  // Dynamically set radius based on node count and tree depth for better spacing
+  const minRadius = 150;
+  const maxRadius = 800;
   const nodeCount = nodes.length;
-  // Use a logarithmic scale for radius growth
-  const radius = Math.max(minRadius, Math.min(maxRadius, 120 + 60 * Math.log2(nodeCount + 1)));
+  const treeDepth = rootHierarchy.height;
+  
+  // Calculate radius based on both node count and tree depth
+  // More nodes = larger radius, deeper trees = more radius per level
+  const baseRadius = 100 + (nodeCount * 8);
+  const depthMultiplier = Math.max(1, treeDepth) * 80;
+  const radius = Math.max(minRadius, Math.min(maxRadius, baseRadius + depthMultiplier));
 
   const layout = cluster<TreeNode>()
-    .size([2 * Math.PI, radius]);
+    .size([2 * Math.PI, radius])
+    .separation((a, b) => {
+      // Increase separation for nodes at the same level to reduce overlap
+      const sameparent = a.parent === b.parent;
+      return sameparent ? 1.2 : 1.8;
+    });
 
   layout(rootHierarchy);
   console.debug('[RadialLayout] After layout:', rootHierarchy);
 
   // Map positions back to a record of nodeId -> position and port positions
   const positions: Record<string, { position: { x: number; y: number }; sourcePosition: string; targetPosition: string }> = {};
+  
+  // Calculate center dynamically based on the actual layout bounds
+  const centerX = 600; // Increased from 400 for larger layouts
+  const centerY = 400; // Increased from 300 for larger layouts
+  
   rootHierarchy.each((d: HierarchyNode<TreeNode>) => {
     const { x, y } = d;
     if (typeof x === 'number' && typeof y === 'number') {
@@ -82,10 +97,10 @@ export function applyRadialLayoutD3(
       const angle = x - Math.PI / 2;
       positions[d.data.id] = {
         position: {
-          x: 400 + r * Math.cos(angle), // 400,300 is center
-          y: 300 + r * Math.sin(angle),
+          x: centerX + r * Math.cos(angle),
+          y: centerY + r * Math.sin(angle),
         },
-        sourcePosition: 'right', // or another default, can be improved
+        sourcePosition: 'right',
         targetPosition: 'left',
       };
     }

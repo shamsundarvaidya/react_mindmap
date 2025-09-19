@@ -12,11 +12,9 @@ import {
   ReactFlow,
   Background,
   Controls,
- 
   type NodeChange,
   type EdgeChange,
   type Node,
-  
 } from "@xyflow/react";
 import * as htmlToImage from "html-to-image";
 
@@ -48,13 +46,33 @@ const MindMap = () => {
     return map;
   }, [nodes]);
 
+  const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
+  // Helper to lighten a hex color
+  function lighten(hex: string, amt = 0.5) {
+    let c = hex.replace('#', '');
+    if (c.length === 3) c = c.split('').map((x) => x + x).join('');
+    const num = parseInt(c, 16);
+    let r = (num >> 16) & 0xff;
+    let g = (num >> 8) & 0xff;
+    let b = num & 0xff;
+    r = Math.round(r + (255 - r) * amt);
+    g = Math.round(g + (255 - g) * amt);
+    b = Math.round(b + (255 - b) * amt);
+    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
+  }
+
   const themedEdges = useMemo(() => {
     return edges.map((e) => {
       const target = nodesById.get(e.target);
-      const stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1"; // slate-300 fallback
-      return { ...e, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 3 } };
+      let stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1";
+      if (layoutDirection === 'RADIAL') {
+        // Use a lighter version of the node color for radial edges
+        stroke = lighten(stroke, 0.7);
+      }
+      const edgeType = layoutDirection === 'RADIAL' ? 'straight' : e.type;
+      return { ...e, type: edgeType, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 2.5 } };
     });
-  }, [edges, nodesById, edgesAnimated]);
+  }, [edges, nodesById, edgesAnimated, layoutDirection]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
@@ -143,6 +161,8 @@ const MindMap = () => {
 
 
 
+  const reactFlowInstanceRef = useRef<any>(null);
+
   return (
     <div className="h-screen flex flex-col" ref={containerRef}>
       <ControlPanel  />
@@ -157,10 +177,24 @@ const MindMap = () => {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           fitView
-          onInit={() => {
-            // Register handler in Redux when ReactFlow is ready
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.05}
+          maxZoom={2}
+          onInit={(instance) => {
+            reactFlowInstanceRef.current = instance;
             console.log("ReactFlow initialized");
             setExportHandler(handleExport);
+            // Additional zooming out after initial fit
+            requestAnimationFrame(() => {
+              try {
+                const currentZoom = instance.getZoom();
+                if (currentZoom > 0.15) {
+                  instance.zoomTo(0.15, { duration: 300 });
+                }
+              } catch (e) {
+                console.warn('Zoom adjustment failed', e);
+              }
+            });
           }}
         >
           <Background />
