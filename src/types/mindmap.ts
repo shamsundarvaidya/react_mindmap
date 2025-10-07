@@ -5,6 +5,7 @@ export interface NodeData extends Record<string, unknown> {
   label: string;
   color?: string;
   note?: string; 
+  collapsed?: boolean; // NEW: collapse state
 }
 
 

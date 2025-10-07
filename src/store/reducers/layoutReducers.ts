@@ -1,7 +1,9 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { MindMapState } from "../../types/mindmap";
 import { getLayoutedPositions } from "../../utils/layoutHelper";
-
+import type { Node, Edge } from "@xyflow/react";
+import type { NodeData } from "../../types/mindmap";
+import { filterVisibleGraph } from "../mindmapUtils";
 
 // export function applyLayoutToMap(state: MindMapState) {
 //   const { nodes, edges } = getLayoutedElements(
@@ -15,9 +17,16 @@ import { getLayoutedPositions } from "../../utils/layoutHelper";
 
 export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR" | "TB" | "RADIAL" | "None">) {
   const direction = action.payload === "None" ? (state.layoutDirection || "LR") : action.payload;
+
+  // Compute layout only for visible subgraph
+  const { nodes: visibleNodes, edges: visibleEdges } = filterVisibleGraph(
+    state.nodes as unknown as Node<NodeData>[],
+    state.edges as unknown as Edge[],
+  );
+
   const positions = getLayoutedPositions(
-    state.nodes,
-    state.edges,
+    visibleNodes as any,
+    visibleEdges as any,
     direction 
   );
   // Log positions in a formatted manner for verification

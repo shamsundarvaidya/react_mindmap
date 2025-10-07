@@ -21,6 +21,7 @@ import * as htmlToImage from "html-to-image";
 import "@xyflow/react/dist/style.css";
 import type { NodeData } from "../types/mindmap";
 import { setExportHandler } from "../store/exportStore";
+import { filterVisibleGraph } from "../store/mindmapUtils";
 
 
 const nodeTypes = {
@@ -36,13 +37,19 @@ const MindMap = () => {
 
   const dispatch = useAppDispatch();
 
+  // Compute visible subgraph (hide descendants of collapsed nodes)
+  const { nodes: visibleNodes, edges: visibleEdges } = useMemo(
+    () => filterVisibleGraph(nodes as any, edges as any),
+    [nodes, edges]
+  );
+
   const nodesById = useMemo(() => {
     const map = new Map<string, Node<NodeData>>();
-    if (Array.isArray(nodes)) {
-      nodes.forEach((n) => map.set(n.id, n as Node<NodeData>));
+    if (Array.isArray(visibleNodes)) {
+      visibleNodes.forEach((n) => map.set(n.id, n as Node<NodeData>));
     }
     return map;
-  }, [nodes]);
+  }, [visibleNodes]);
 
   const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
   // Helper to lighten a hex color
@@ -60,7 +67,7 @@ const MindMap = () => {
   }
 
   const themedEdges = useMemo(() => {
-    return edges.map((e) => {
+    return visibleEdges.map((e) => {
       const target = nodesById.get(e.target);
       let stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1";
       if (layoutDirection === 'RADIAL') {
@@ -70,7 +77,7 @@ const MindMap = () => {
       const edgeType = layoutDirection === 'RADIAL' ? 'straight' : e.type;
       return { ...e, type: edgeType, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 2.5 } };
     });
-  }, [edges, nodesById, edgesAnimated, layoutDirection]);
+  }, [visibleEdges, nodesById, edgesAnimated, layoutDirection]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
@@ -145,7 +152,7 @@ const MindMap = () => {
       <div className="flex-1">
         <ReactFlow
           ref={flowRef}
-          nodes={nodes}
+          nodes={visibleNodes}
           edges={themedEdges}
           nodeTypes={nodeTypes}
           onNodeClick={onNodeClick}

@@ -5,7 +5,7 @@ import { applyEdgeChangesAction } from "./reducers/edgeReducers";
 import { deleteNodeAndDescendants } from "./reducers/deleteReducers";
 import { addChildNodeToMap, addSiblingNodeToMap } from "./reducers/addNodeReducers";
 import { applyLayoutToMap } from "./reducers/layoutReducers";
-import { updateNodeLabel, updateNodeColor,updateNodeNote } from "./reducers/updateReducers";
+import { updateNodeLabel, updateNodeColor,updateNodeNote, toggleNodeCollapse } from "./reducers/updateReducers";
 import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } from "./reducers/storageReducers";
 
 
@@ -26,7 +26,8 @@ import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } 
     saveMindMapToLocalStorage,
     applyLayoutToMap,
     loadMindMapFromLocalStorage,
-    updateNodeNote
+    updateNodeNote,
+    toggleNodeCollapse, // NEW
   },
 });
 
@@ -45,7 +46,6 @@ export const {
   saveMindMapToLocalStorage: saveMindMap,
   applyLayoutToMap: applyLayout,
   loadMindMapFromLocalStorage: loadMindMap,
-  updateNodeNote: updateNote
-
-
+  updateNodeNote: updateNote,
+  toggleNodeCollapse: toggleCollapse, // NEW
 } = mindmapSlice.actions;

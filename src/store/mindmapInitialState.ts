@@ -6,7 +6,7 @@ export const initialState: MindMapState = {
       id: "root",
       type: "customNode",
       position: { x: 250, y: 100 },
-      data: { label: "Root Node" },
+      data: { label: "Root Node", collapsed: false }, // ensure field exists
     },
   ],
   edges: [],

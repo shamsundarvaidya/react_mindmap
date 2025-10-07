@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { applyLayout, updateLabel } from '../store/mindmapSlice';
+import { applyLayout, updateLabel, toggleCollapse } from '../store/mindmapSlice';
 import type { NodeData } from '../types/mindmap';
 
 const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
@@ -59,6 +59,10 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const handleDoubleClick = () => {
     setEditing(true);
   };
+  // Hide collapse icon for leaf nodes (no outgoing edges)
+  const hasChildren = useAppSelector((state) =>
+    state.mindmap.edges.some((e) => e.source === id)
+  );
 
   const handleBlur = () => {
     dispatch(updateLabel({ id, label: value }));
@@ -91,6 +95,19 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
       `}
       onDoubleClick={handleDoubleClick}
     >
+      {/* Collapse toggle button */}
+      {hasChildren && (
+        <button
+          title={data.collapsed ? 'Expand' : 'Collapse'}
+          onClick={(e) => { e.stopPropagation(); dispatch(toggleCollapse(id)); dispatch(applyLayout("None")); }}
+          onDoubleClick={(e) => e.stopPropagation()}
+          className="absolute top-1 left-1 text-[11px] leading-none px-1.5 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 shadow"
+          style={{ zIndex: 3 }}
+        >
+          {data.collapsed ? '+' : '−'}
+        </button>
+      )}
+
       <Handle
         type="target"
         position={layoutDirection === 'TB' ? Position.Top : Position.Left}
