@@ -3,6 +3,7 @@ import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { applyLayout, updateLabel, toggleCollapse } from '../store/mindmapSlice';
 import type { NodeData } from '../types/mindmap';
+import { findAllDescendants } from '../store/mindmapUtils'; // NEW
 
 const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
@@ -59,9 +60,13 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const handleDoubleClick = () => {
     setEditing(true);
   };
-  // Hide collapse icon for leaf nodes (no outgoing edges)
-  const hasChildren = useAppSelector((state) =>
-    state.mindmap.edges.some((e) => e.source === id)
+  // Child relations
+  const edges = useAppSelector((state) => state.mindmap.edges); // NEW
+  const hasChildren = edges.some((e) => e.source === id); // NEW
+  // Hidden descendant count when collapsed
+  const hiddenCount = React.useMemo( // NEW
+    () => (data.collapsed ? Math.max(0, findAllDescendants(id, edges).size - 1) : 0),
+    [data.collapsed, id, edges]
   );
 
   const handleBlur = () => {
@@ -153,6 +158,16 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
         >
           {data.label}
         </div>
+      )}
+      {/* Child count badge: show only when collapsed */}
+      {data.collapsed && hiddenCount > 0 && (
+        <span
+          title={`${hiddenCount} hidden`}
+          className="absolute bottom-1 right-1 rounded-full min-w-[18px] h-[18px] px-1 text-[11px] leading-none flex items-center justify-center text-white shadow"
+          style={{ background: '#334155', zIndex: 2 }}
+        >
+          {hiddenCount}
+        </span>
       )}
       <Handle
         type="source"
