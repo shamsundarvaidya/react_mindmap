@@ -5,7 +5,7 @@ import DeleteNode from "./nodeActions/DeleteNode";
 
 
 const NodeMenu = () => (
-  <div className="flex gap-2.5">
+  <div className="flex flex-col sm:flex-row gap-2">
     <AddNode />
     <DeleteNode />
     <EditNote />

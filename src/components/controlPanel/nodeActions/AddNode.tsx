@@ -18,8 +18,8 @@ const AddNode = () => {
 
 
   return <button
-      className="inline-flex items-center gap-1 bg-teal-600 text-white px-2 py-1.5 rounded-lg shadow-sm
-       hover:bg-teal-700 active:bg-teal-800 text-sm transition disabled:opacity-50"
+      className="inline-flex items-center justify-center gap-1 bg-teal-600 text-white px-3 py-2 rounded-lg shadow-sm
+       hover:bg-teal-700 active:bg-teal-800 text-sm transition disabled:opacity-50 min-w-[80px] w-full sm:w-auto"
       onClick={onAdd}
       disabled={!selectedNodeId}
     >

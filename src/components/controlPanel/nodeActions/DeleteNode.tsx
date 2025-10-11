@@ -29,7 +29,7 @@ const DeleteNode = () => {
   };
 
   return <button
-      className="inline-flex items-center gap-1.5 bg-rose-600 text-white px-3 py-1.5 rounded-lg shadow-sm hover:bg-rose-700 active:bg-rose-800 text-sm transition disabled:opacity-50"
+      className="inline-flex items-center justify-center gap-1.5 bg-rose-600 text-white px-3 py-2 rounded-lg shadow-sm hover:bg-rose-700 active:bg-rose-800 text-sm transition disabled:opacity-50 min-w-[80px] w-full sm:w-auto"
       onClick={handleDelete}
       disabled={!selectedNodeId}
     >

@@ -56,7 +56,7 @@ const [noteHtml, setNoteHtml] = useState("");
   return (
     <>
       <button
-        className="flex items-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg ml-2 transition disabled:opacity-50 shadow"
+        className="flex items-center justify-center gap-2 bg-yellow-400 hover:bg-yellow-500 text-white font-bold py-2 px-4 rounded-lg transition disabled:opacity-50 shadow min-w-[100px] w-full sm:w-auto"
         onClick={() => setOpen(true)}
         title="Edit Note"
         disabled={!selectedNodeId}
@@ -70,7 +70,7 @@ const [noteHtml, setNoteHtml] = useState("");
         style={{ padding: 0, border: 0, background: 'transparent' }}
         onCancel={e => { e.preventDefault(); setOpen(false); }}
       >
-        <div className="relative bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md mx-4 flex flex-col items-center justify-center">
+        <div className="relative bg-white rounded-2xl shadow-2xl p-4 sm:p-8 w-full max-w-md mx-4 flex flex-col items-center justify-center max-h-[90vh] overflow-y-auto">
           <button
             className="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold focus:outline-none"
             onClick={() => setOpen(false)}
