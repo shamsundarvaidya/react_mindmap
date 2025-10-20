@@ -1,75 +1,123 @@
-import { useRef, useState, useEffect, useCallback } from "react";
-import { useAppSelector } from "../../store";
-import SaveButton from "./fileActions/SaveButton";
-import ExportButton from "./fileActions/ExportButton";
-import ExportPngButton from "./fileActions/ExportToPngButton";
-import ImportButton from "./fileActions/ImportButton";
-import ClearButton from "./fileActions/ClearButton";
+import React, {
+  useRef,
+  useState,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+} from "react";
+import { createPortal } from "react-dom";
+import { FileMenuContext, useFileMenu } from "./FileMenuContext";
+import FileMenuItems from "./FileMenuItems";
 
-const FileMenu = () => {
+// Constants
+const MAX_Z_INDEX = 2147483647;
+
+const FileMenu: React.FC<{ children?: React.ReactNode }> & {
+  Toggle: React.FC;
+  Dropdown: React.FC;
+} = ({ children }) => {
   const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const { nodes, edges, layoutDirection } = useAppSelector(
-    (state) => state.mindmap
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const contextValue = useMemo(
+    () => ({ open, setOpen, toggleRef, menuRef }),
+    [open]
   );
 
+  return (
+    <FileMenuContext.Provider value={contextValue}>
+      {children}
+    </FileMenuContext.Provider>
+  );
+};
+
+// Toggle subcomponent
+FileMenu.Toggle = function Toggle() {
+  const { open, setOpen, toggleRef } = useFileMenu();
+  
+  return (
+    <button
+      ref={toggleRef}
+      aria-haspopup="true"
+      aria-expanded={open}
+      className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
+        open
+          ? 'bg-slate-800 text-white'
+          : 'text-slate-700 hover:bg-slate-100'
+      }`}
+      type="button"
+      onClick={() => setOpen((prev) => !prev)}
+    >
+      File ▾
+    </button>
+  );
+};
+
+// Dropdown subcomponent
+FileMenu.Dropdown = function Dropdown() {
+  const { open, toggleRef, menuRef, setOpen } = useFileMenu();
+  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
+
+  // Compute menu position
+  useLayoutEffect(() => {
+    if (!open || !toggleRef.current) return;
+    const rect = toggleRef.current.getBoundingClientRect();
+    setMenuStyle({
+      position: "fixed",
+      top: rect.bottom + 6,
+      left: rect.left,
+      minWidth: Math.max(220, rect.width),
+      zIndex: MAX_Z_INDEX,
+    });
+  }, [open, toggleRef]);
+
+  // Handle outside clicks and escape key
   useEffect(() => {
     if (!open) return;
-    const handleClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+
+    const handleDocClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (menuRef.current?.contains(target) || toggleRef.current?.contains(target)) {
+        return;
+      }
+      setOpen(false);
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
         setOpen(false);
       }
     };
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, [open]);
 
-  const handleExport = useCallback(() => {
-    const input = prompt("Enter filename for download:", "mindmap.json");
-    if (!input) return;
-    const filename = input.endsWith(".json") ? input : `${input}.json`;
+    const timeoutId = window.setTimeout(() => {
+      document.addEventListener("click", handleDocClick);
+    }, 60);
 
-    const data = JSON.stringify({ nodes, edges, layoutDirection }, null, 2);
-    const blob = new Blob([data], { type: "application/json" });
-    const url = URL.createObjectURL(blob);
+    document.addEventListener("keydown", handleKeyDown);
 
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.click();
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener("click", handleDocClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [open, menuRef, toggleRef, setOpen]);
+  
+  if (!open) return null;
 
-    URL.revokeObjectURL(url);
-    setOpen(false);
-  }, [nodes, edges, layoutDirection]);
-
-  return (
-    <div className="relative" ref={menuRef}>
-      <button
-        className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 text-sm"
-        onClick={() => setOpen((v) => !v)}
-      >
-        File ▾
-      </button>
-      {open && (
-        <div className="absolute mt-1 left-0 w-56 bg-white border border-slate-200 rounded-md shadow-lg p-1 z-50">
-          <div onClick={() => setOpen(false)}>
-            <SaveButton variant="menu" />
-          </div>
-          <div>
-            <ExportButton variant="menu" onClick={handleExport} />
-          </div>
-          <div onClick={() => setOpen(false)}>
-            <ExportPngButton variant="menu" />
-          </div>
-          <div>
-            <ImportButton variant="menu" onComplete={() => setOpen(false)} />
-          </div>
-          <div onClick={() => setOpen(false)}>
-            <ClearButton variant="menu" />
-          </div>
-        </div>
-      )}
-    </div>
+  return createPortal(
+    <div
+      ref={menuRef}
+      role="menu"
+      aria-label="File menu"
+      style={menuStyle}
+      className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-2 w-60 text-sm font-medium text-slate-300"
+    >
+      <div className="space-y-1">
+        <FileMenuItems />
+      </div>
+    </div>,
+    document.body
   );
 };
 

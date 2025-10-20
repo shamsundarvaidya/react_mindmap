@@ -1,46 +1,55 @@
-import { useRef, useState, useEffect } from "react";
+import DropdownMenu, { useDropdownMenuContext } from "../common/DropdownMenu";
+import { MenuItem, MenuButton } from "./fileActions/MenuComponents";
+import { useAppDispatch } from "../../store";
+import { applyLayout } from "../../store/mindmapSlice";
 import NoteIndicatorToggle from "./settingActions/NoteIndicatorToggle";
-import LayoutHorizontalButton from "./settingActions/LayoutHorizontalButton";
-import LayoutVerticalButton from "./settingActions/LayoutVerticalButton";
-import LayoutRadialButton from "./settingActions/LayoutRadialButton";
 
-const SettingsMenu = () => {
-  const [open, setOpen] = useState(false);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  // All logic/UI now in subcomponents
+const SettingsMenuContent = () => {
+  const { closeMenu } = useDropdownMenuContext();
+  const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    if (!open) return;
-    const handleClick = (e: MouseEvent) => {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("click", handleClick);
-    return () => document.removeEventListener("click", handleClick);
-  }, [open]);
+  const handleLayoutChange = (layout: "LR" | "TB" | "RADIAL") => {
+    dispatch(applyLayout(layout));
+    closeMenu();
+  };
 
   return (
-    <div className="relative" ref={menuRef}>
-      <button
-        className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700 text-sm"
-        onClick={() => setOpen((v) => !v)}
-      >
-        Settings ▾
-      </button>
-      {open && (
-        <div className="absolute mt-1 left-0 w-64 bg-white border border-slate-200 rounded-md shadow-lg p-1 z-50">
-          <NoteIndicatorToggle />
-          <div className="h-px my-1 bg-slate-200" />
-          <div className="px-3 py-1 text-xs uppercase tracking-wide text-slate-500">Layout settings</div>
-          <div className="px-3 pb-2 flex flex-col gap-0">
-            <LayoutHorizontalButton onClick={() => setOpen(false)} />
-            <LayoutVerticalButton onClick={() => setOpen(false)} />
-            <LayoutRadialButton onClick={() => setOpen(false)} />
-          </div>
-        </div>
-      )}
+    <div className="space-y-1">
+      <div className="px-3 py-2">
+        <NoteIndicatorToggle />
+      </div>
+      <div className="h-px my-1 bg-slate-700" />
+      <div className="px-3 py-1 text-xs uppercase tracking-wide text-slate-500">
+        Layout settings
+      </div>
+      <MenuItem onClick={() => handleLayoutChange("LR")} className="hover:bg-slate-700 hover:text-white">
+        <MenuButton icon="➡️" label="Horizontal layout" />
+      </MenuItem>
+      <MenuItem onClick={() => handleLayoutChange("TB")} className="hover:bg-slate-700 hover:text-white">
+        <MenuButton icon="⬇️" label="Vertical layout" />
+      </MenuItem>
+      <MenuItem onClick={() => handleLayoutChange("RADIAL")} className="hover:bg-slate-700 hover:text-white">
+        <MenuButton icon="🔘" label="Radial layout" />
+      </MenuItem>
     </div>
+  );
+};
+
+const SettingsMenu = () => {
+  return (
+    <DropdownMenu>
+      <DropdownMenu.Toggle className="px-3 py-1.5 rounded-md text-sm transition-colors hover:bg-slate-100 text-slate-700">
+        Settings ▾
+      </DropdownMenu.Toggle>
+      <DropdownMenu.Content 
+        usePortal
+        width={256}
+        position="bottom-left"
+        className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-2 text-sm font-medium text-slate-300"
+      >
+        <SettingsMenuContent />
+      </DropdownMenu.Content>
+    </DropdownMenu>
   );
 };
 

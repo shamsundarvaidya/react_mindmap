@@ -1,9 +1,7 @@
 // (No store usage needed directly here after refactor)
 import { useState, useEffect, useRef } from "react";
 import NodeMenu from "./controlPanel/NodeMenu";
-import FileMenu from "./controlPanel/FileMenu";
-import SettingsMenu from "./controlPanel/SettingsMenu";
-import ThemeMenu from "./controlPanel/ThemeMenu";
+import AppMenu from "./controlPanel/AppMenu";
 
 
 const ControlPanel = () => {
@@ -19,27 +17,32 @@ const ControlPanel = () => {
       }
     };
     // Add a small delay to prevent immediate closing when opening
-    const timeoutId = setTimeout(() => {
+    // and also support Escape to close the menu
+    const timeoutId = window.setTimeout(() => {
       document.addEventListener("click", handleClick);
-    }, 100);
-    
+    }, 60);
+
+    const onKey = (ev: KeyboardEvent) => {
+      if (ev.key === 'Escape') setIsMobileMenuOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+
     return () => {
       clearTimeout(timeoutId);
       document.removeEventListener("click", handleClick);
+      document.removeEventListener('keydown', onKey);
     };
   }, [isMobileMenuOpen]);
 
   // Theme & settings handled via dedicated sub-menus
   return (
     <>
-      <div className="px-4 py-2 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/70 border-b border-slate-200 shadow-sm z-50 relative">
+      <div className="px-4 py-2 bg-blue-300  relative">
         {/* Desktop Layout */}
         <div className="hidden md:flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="text-slate-800 font-semibold tracking-wide select-none">mind map</div>
-            <FileMenu />
-            <SettingsMenu />
-            <ThemeMenu />
+            <AppMenu />
           </div>
 
           {/* Right side buttons */}
@@ -82,16 +85,7 @@ const ControlPanel = () => {
           >
             <div className="px-4 py-4 space-y-4">
               <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                <div className="text-xs font-medium text-slate-600 uppercase tracking-wide mb-2">File Operations</div>
-                <FileMenu />
-              </div>
-              <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                <div className="text-xs font-medium text-slate-600 uppercase tracking-wide mb-2">Settings</div>
-                <SettingsMenu />
-              </div>
-              <div className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                <div className="text-xs font-medium text-slate-600 uppercase tracking-wide mb-2">Theme</div>
-                <ThemeMenu />
+                <AppMenu variant="stack" />
               </div>
             </div>
           </div>

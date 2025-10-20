@@ -1,13 +1,7 @@
-import React from 'react';
 import { useReactFlow, getNodesBounds } from '@xyflow/react';
-import { useAppDispatch, useAppSelector } from '../../../store';
-import { selectNode } from '../../../store/mindmapSlice';
+import { useAppDispatch, useAppSelector } from '../store';
+import { selectNode } from '../store/mindmapSlice';
 import { toPng } from 'html-to-image';
-
-interface ExportToPngButtonProps {
-  variant?: 'default' | 'menu';
-  className?: string;
-}
 
 function downloadImage(dataUrl: string) {
   const a = document.createElement('a');
@@ -18,7 +12,7 @@ function downloadImage(dataUrl: string) {
 
 const padding = 20; // px
 
- const ExportPngButton: React.FC<ExportToPngButtonProps> = ({ variant = 'default', className = '' }) => {
+export const useExportToPng = () => {
   const { getNodes } = useReactFlow();
   const dispatch = useAppDispatch();
   const selectedNodeId = useAppSelector((state) => state.mindmap.selectedNodeId);
@@ -26,7 +20,6 @@ const padding = 20; // px
   const handleExportPng = async () => {
     const nodesBounds = getNodesBounds(getNodes());
 
-    // Expand bounds by padding
     const paddedBounds = {
       x: nodesBounds.x - padding,
       y: nodesBounds.y - padding,
@@ -34,11 +27,9 @@ const padding = 20; // px
       height: nodesBounds.height + padding * 2,
     };
 
-    // Use the padded bounds as the image size
     const imageWidth = paddedBounds.width;
     const imageHeight = paddedBounds.height;
 
-    // Always align top-left for dynamic bounding
     const x = -paddedBounds.x;
     const y = -paddedBounds.y;
 
@@ -76,16 +67,5 @@ const padding = 20; // px
     }
   };
 
-  const baseDefault = "inline-flex items-center gap-1.5 bg-emerald-600 text-white px-3 py-1.5 rounded-lg shadow-sm hover:bg-emerald-700 active:bg-emerald-800 text-sm transition";
-  const baseMenu = "w-full inline-flex items-center gap-2 px-3 py-2 rounded hover:bg-slate-100 text-slate-700 text-sm";
-  const btnClass = `${variant === 'menu' ? baseMenu : baseDefault} ${className}`.trim();
-
-  return (
-    <button className={btnClass} onClick={handleExportPng}>
-      <span className="text-lg">🖼️</span>
-      <span>Export PNG</span>
-    </button>
-  );
+  return { handleExportPng };
 };
-
-export default ExportPngButton;
