@@ -1,124 +1,126 @@
-import React, {
-  useRef,
-  useState,
-  useEffect,
-  useLayoutEffect,
-  useMemo,
-} from "react";
-import { createPortal } from "react-dom";
-import { FileMenuContext, useFileMenu } from "./FileMenuContext";
-import FileMenuItems from "./FileMenuItems";
-
-// Constants
-const MAX_Z_INDEX = 2147483647;
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { useCallback } from "react";
+import { 
+  File, 
+  ChevronDown, 
+  Save, 
+  Download, 
+  Image, 
+  Upload, 
+  Trash2 
+} from "lucide-react";
+import { cn } from "../../lib/utils";
+import { useClearMindMap } from "../../hooks/useClearMindMap";
+import { useSaveMindMap } from "../../hooks/useSaveMindMap";
+import { useExportToPng } from "../../hooks/useExportToPng";
+import { useExportToJson } from "../../hooks/useExportToJson";
+import { useImportFromJson } from "../../hooks/useImportFromJson";
 
 const FileMenu: React.FC<{ children?: React.ReactNode }> & {
   Toggle: React.FC;
   Dropdown: React.FC;
-} = ({ children }) => {
-  const [open, setOpen] = useState(false);
-  const toggleRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
+} = () => {
+  const handleClear = useClearMindMap();
+  const { handleSave } = useSaveMindMap();
+  const { handleExportPng } = useExportToPng();
+  const { handleExportToJson } = useExportToJson();
+  const { inputRef, handleUpload, triggerFileSelect } = useImportFromJson();
 
-  const contextValue = useMemo(
-    () => ({ open, setOpen, toggleRef, menuRef }),
-    [open]
+  const createHandler = useCallback(
+    (callback: () => void) => () => {
+      callback();
+    },
+    []
   );
 
   return (
-    <FileMenuContext.Provider value={contextValue}>
-      {children}
-    </FileMenuContext.Provider>
+    <DropdownMenu>
+      <DropdownMenuTrigger className={cn(
+        "inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
+        "hover:bg-slate-600 text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
+      )}>
+        <File className="h-4 w-4" />
+        File
+        <ChevronDown className="h-3 w-3 opacity-50" />
+      </DropdownMenuTrigger>
+      
+      <DropdownMenuContent 
+        align="start"
+        className={cn(
+          "w-60 bg-slate-800 border-slate-700 text-slate-300",
+          "data-[state=open]:animate-in data-[state=closed]:animate-out",
+          "data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+          "data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95"
+        )}
+        sideOffset={5}
+      >
+        <DropdownMenuItem 
+          onClick={createHandler(handleSave)}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <Save className="mr-3 h-4 w-4" />
+          <span>Save to browser</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={createHandler(handleExportToJson)}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <Download className="mr-3 h-4 w-4" />
+          <span>Download JSON</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={createHandler(handleExportPng)}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <Image className="mr-3 h-4 w-4" />
+          <span>Export as PNG</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={triggerFileSelect}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <Upload className="mr-3 h-4 w-4" />
+          <span>Import from JSON</span>
+        </DropdownMenuItem>
+        
+        <input
+          ref={inputRef}
+          type="file"
+          accept="application/json"
+          onChange={handleUpload}
+          className="hidden"
+        />
+        
+        <DropdownMenuSeparator className="bg-slate-700 my-2" />
+        
+        <DropdownMenuItem 
+          onClick={createHandler(handleClear)}
+          className="hover:bg-red-500/20 text-red-400 focus:bg-red-500/20 focus:text-red-400 cursor-pointer"
+        >
+          <Trash2 className="mr-3 h-4 w-4" />
+          <span>Clear Mind Map</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 
-// Toggle subcomponent
+// Keep the subcomponents for backward compatibility with AppMenu
 FileMenu.Toggle = function Toggle() {
-  const { open, setOpen, toggleRef } = useFileMenu();
-  
-  return (
-    <button
-      ref={toggleRef}
-      aria-haspopup="true"
-      aria-expanded={open}
-      className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
-        open
-          ? 'bg-slate-800 text-white'
-          : 'text-slate-700 hover:bg-slate-100'
-      }`}
-      type="button"
-      onClick={() => setOpen((prev) => !prev)}
-    >
-      File ▾
-    </button>
-  );
+  return null; // Not used in new implementation
 };
 
-// Dropdown subcomponent
 FileMenu.Dropdown = function Dropdown() {
-  const { open, toggleRef, menuRef, setOpen } = useFileMenu();
-  const [menuStyle, setMenuStyle] = useState<React.CSSProperties>({});
-
-  // Compute menu position
-  useLayoutEffect(() => {
-    if (!open || !toggleRef.current) return;
-    const rect = toggleRef.current.getBoundingClientRect();
-    setMenuStyle({
-      position: "fixed",
-      top: rect.bottom + 6,
-      left: rect.left,
-      minWidth: Math.max(220, rect.width),
-      zIndex: MAX_Z_INDEX,
-    });
-  }, [open, toggleRef]);
-
-  // Handle outside clicks and escape key
-  useEffect(() => {
-    if (!open) return;
-
-    const handleDocClick = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (menuRef.current?.contains(target) || toggleRef.current?.contains(target)) {
-        return;
-      }
-      setOpen(false);
-    };
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setOpen(false);
-      }
-    };
-
-    const timeoutId = window.setTimeout(() => {
-      document.addEventListener("click", handleDocClick);
-    }, 60);
-
-    document.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener("click", handleDocClick);
-      document.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [open, menuRef, toggleRef, setOpen]);
-  
-  if (!open) return null;
-
-  return createPortal(
-    <div
-      ref={menuRef}
-      role="menu"
-      aria-label="File menu"
-      style={menuStyle}
-      className="bg-slate-800 border border-slate-700 rounded-lg shadow-xl p-2 w-60 text-sm font-medium text-slate-300"
-    >
-      <div className="space-y-1">
-        <FileMenuItems />
-      </div>
-    </div>,
-    document.body
-  );
+  return null; // Not used in new implementation
 };
 
 export default FileMenu;

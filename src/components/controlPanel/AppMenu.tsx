@@ -13,12 +13,9 @@ const AppMenu: React.FC<AppMenuProps> = ({ variant = 'inline' }) => {
   if (variant === 'stack') {
     return (
       <div className="flex flex-col gap-2 w-full">
-        <FileMenu>
-          <FileMenu.Toggle />
-          <FileMenu.Dropdown />
-        </FileMenu>
+        <FileMenu />
         <SettingsMenu />
-        <ThemeMenu />
+       
       </div>
     );
   }
@@ -26,22 +23,17 @@ const AppMenu: React.FC<AppMenuProps> = ({ variant = 'inline' }) => {
   // inline (desktop) - compact group
   return (
     <div
-      className="inline-flex items-center bg-white/80 rounded-lg shadow-sm border border-slate-100 overflow-hidden"
+      className="inline-flex items-center bg-slate-800/90 rounded-lg shadow-lg border border-slate-600 overflow-hidden backdrop-blur-sm"
       role="group"
       aria-label="Application menu"
     >
       <div className="px-2 py-1">
-        <FileMenu>
-          <FileMenu.Toggle />
-          <FileMenu.Dropdown />
-        </FileMenu>
+        <FileMenu />
       </div>
-      <div className="border-l border-slate-100 px-2 py-1">
+      <div className="border-l border-slate-500 px-2 py-1">
         <SettingsMenu />
       </div>
-      <div className="border-l border-slate-100 px-2 py-1">
-        <ThemeMenu />
-      </div>
+      
     </div>
   );
 };
