@@ -3,8 +3,8 @@ import { useState, useEffect, useRef } from "react";
 import NodeMenu from "./controlPanel/NodeMenu";
 import AppMenu from "./controlPanel/AppMenu";
 import Logo from "./common/Logo";
-import { Button } from "@/components/ui/button";
-import { Icons } from "@/components/icons";
+import { Button } from "../components/ui/button";
+import {AlignJustifyIcon} from "../components/ui/icons/lucide-align-justify"; ;
 
 const ControlPanel = () => {
   return (
@@ -18,7 +18,7 @@ const ControlPanel = () => {
               aria-label="Open menu"
               className="md:hidden p-2 h-8 w-8"
             >
-              <Icons.menu className="h-5 w-5" />
+              <AlignJustifyIcon size={16} />
             </Button>
             <Logo size="md" />
             <div className="h-6 w-px bg-slate-600"></div>
