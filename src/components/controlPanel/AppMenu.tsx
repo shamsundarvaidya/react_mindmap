@@ -1,21 +1,20 @@
-import React from 'react';
-import FileMenu from './FileMenu';
-import SettingsMenu from './SettingsMenu';
-import ThemeMenu from './ThemeMenu';
+import React from "react";
+import FileMenu from "./FileMenu";
+import SettingsMenu from "./SettingsMenu";
+import ThemeMenu from "./ThemeMenu";
 
-type Variant = 'inline' | 'stack';
+type Variant = "inline" | "stack";
 
 interface AppMenuProps {
   variant?: Variant;
 }
 
-const AppMenu: React.FC<AppMenuProps> = ({ variant = 'inline' }) => {
-  if (variant === 'stack') {
+const AppMenu: React.FC<AppMenuProps> = ({ variant = "inline" }) => {
+  if (variant === "stack") {
     return (
       <div className="flex flex-col gap-2 w-full">
         <FileMenu />
         <SettingsMenu />
-       
       </div>
     );
   }
@@ -27,13 +26,12 @@ const AppMenu: React.FC<AppMenuProps> = ({ variant = 'inline' }) => {
       role="group"
       aria-label="Application menu"
     >
-      <div className="px-2 py-1">
+      <div className="px-2 py-1 hidden md:block">
         <FileMenu />
       </div>
-      <div className="border-l border-slate-500 px-2 py-1">
+      <div className="border-l border-slate-500 px-2 py-1 hidden md:block">
         <SettingsMenu />
       </div>
-      
     </div>
   );
 };
