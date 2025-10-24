@@ -3,7 +3,8 @@ import { Menu } from "lucide-react";
 import { SidebarHeader } from "./sidebar/SidebarHeader";
 import { FileMenuSection } from "./sidebar/FileMenuSection";
 import { SettingsMenuSection } from "./sidebar/SettingsMenuSection";
-import { NavigationMenu } from "./sidebar/NavigationMenu";
+import { ThemeMenuSection } from "./sidebar/ThemeMenuSection";
+
 
 export function Sidebar() {
   return (
@@ -14,10 +15,11 @@ export function Sidebar() {
       <SheetContent side="left" className="w-80 bg-slate-900 border-r border-slate-700">
         <div className="flex flex-col h-full">
           <SidebarHeader />
-          <nav className="flex-1 space-y-2">
+          <nav className="flex-1 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 space-y-2 pr-2 pb-4">
             <FileMenuSection />
+            <ThemeMenuSection />
             <SettingsMenuSection />
-            <NavigationMenu />
+            
           </nav>
         </div>
       </SheetContent>

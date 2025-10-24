@@ -8,6 +8,7 @@ import {
 } from "../store/mindmapSlice";
 import CustomNode from "./CustomNode";
 import ControlPanel from "./ControlPanel";
+import MobileNodeMenu from "./controlPanel/MobileNodeMenu";
 import {
   ReactFlow,
   Background,
@@ -51,33 +52,13 @@ const MindMap = () => {
     return map;
   }, [visibleNodes]);
 
-  const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
-  // Helper to lighten a hex color
-  function lighten(hex: string, amt = 0.5) {
-    let c = hex.replace('#', '');
-    if (c.length === 3) c = c.split('').map((x) => x + x).join('');
-    const num = parseInt(c, 16);
-    let r = (num >> 16) & 0xff;
-    let g = (num >> 8) & 0xff;
-    let b = num & 0xff;
-    r = Math.round(r + (255 - r) * amt);
-    g = Math.round(g + (255 - g) * amt);
-    b = Math.round(b + (255 - b) * amt);
-    return `#${((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1)}`;
-  }
-
   const themedEdges = useMemo(() => {
     return visibleEdges.map((e) => {
       const target = nodesById.get(e.target);
-      let stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1";
-      if (layoutDirection === 'RADIAL') {
-        // Use a lighter version of the node color for radial edges
-        stroke = lighten(stroke, 0.7);
-      }
-      const edgeType = layoutDirection === 'RADIAL' ? 'straight' : e.type;
-      return { ...e, type: edgeType, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 2.5 } };
+      const stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1";
+      return { ...e, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 2.5 } };
     });
-  }, [visibleEdges, nodesById, edgesAnimated, layoutDirection]);
+  }, [visibleEdges, nodesById, edgesAnimated]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
@@ -129,7 +110,7 @@ const MindMap = () => {
       try {
         const parsed = JSON.parse(saved);
         dispatch(loadMindMap(parsed));
-      } catch (err) {
+      } catch {
         console.warn("Invalid mind map data in localStorage.");
       }
     }
@@ -148,6 +129,7 @@ const MindMap = () => {
   return (
     <div className="h-screen flex flex-col" ref={containerRef}>
       <ControlPanel  />
+      <MobileNodeMenu />
      
       <div className="flex-1">
         <ReactFlow

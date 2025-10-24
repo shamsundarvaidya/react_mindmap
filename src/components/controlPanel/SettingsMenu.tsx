@@ -8,14 +8,15 @@ import {
 } from "../ui/dropdown-menu";
 import { useAppDispatch } from "../../store";
 import { applyLayout } from "../../store/mindmapSlice";
-import NoteIndicatorToggle from "./settingActions/NoteIndicatorToggle";
-import { Settings, ArrowRight, ArrowDown, Circle, ChevronDown } from "lucide-react";
+import { useNoteIndicatorToggle } from "../../hooks/useNoteIndicatorToggle";
+import { Settings, ArrowRight, ArrowDown, ChevronDown } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 const SettingsMenu = () => {
   const dispatch = useAppDispatch();
+  const { showNoteIndicator, toggleNoteIndicator } = useNoteIndicatorToggle();
 
-  const handleLayoutChange = (layout: "LR" | "TB" | "RADIAL") => {
+  const handleLayoutChange = (layout: "LR" | "TB") => {
     dispatch(applyLayout(layout));
   };
 
@@ -42,7 +43,15 @@ const SettingsMenu = () => {
         sideOffset={5}
       >
         <div className="p-2">
-          <NoteIndicatorToggle />
+          <label className="w-full flex items-center gap-2 px-3 py-2 text-slate-300 text-sm cursor-pointer select-none hover:bg-slate-700 rounded-md transition-colors">
+            <input
+              type="checkbox"
+              className="accent-blue-500"
+              checked={showNoteIndicator}
+              onChange={(e) => toggleNoteIndicator(e.target.checked)}
+            />
+            Show note indicator
+          </label>
         </div>
         
         <DropdownMenuSeparator className="bg-slate-700" />
@@ -65,14 +74,6 @@ const SettingsMenu = () => {
         >
           <ArrowDown className="mr-2 h-4 w-4" />
           <span>Vertical Layout</span>
-        </DropdownMenuItem>
-        
-        <DropdownMenuItem 
-          onClick={() => handleLayoutChange("RADIAL")}
-          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
-        >
-          <Circle className="mr-2 h-4 w-4" />
-          <span>Radial Layout</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -15,7 +15,7 @@ import { filterVisibleGraph } from "../mindmapUtils";
 //   state.edges = edges;
 // }
 
-export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR" | "TB" | "RADIAL" | "None">) {
+export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR" | "TB" | "None">) {
   const direction = action.payload === "None" ? (state.layoutDirection || "LR") : action.payload;
 
   // Compute layout only for visible subgraph
@@ -35,7 +35,7 @@ export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR"
     const formatted = Object.entries(positions).map(([id, pos]) =>
       `${id}: x=${pos.position.x.toFixed(1)}, y=${pos.position.y.toFixed(1)}, src=${pos.sourcePosition}, tgt=${pos.targetPosition}`
     ).join('\n');
-    // eslint-disable-next-line no-console
+     
     console.log(`${layoutLabel}\n${formatted}`);
   }
   // Only update node positions and related fields

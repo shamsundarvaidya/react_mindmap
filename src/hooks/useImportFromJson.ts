@@ -16,7 +16,7 @@ export const useImportFromJson = (onComplete?: () => void) => {
         const json = JSON.parse(event.target?.result as string);
         dispatch(loadMindMap(json));
         onComplete?.();
-      } catch (err) {
+      } catch {
         alert("Invalid file format");
       }
     };

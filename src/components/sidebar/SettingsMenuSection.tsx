@@ -1,13 +1,12 @@
 import { useState, useCallback } from "react";
-import { Settings, ChevronDown, ChevronRight, ArrowRight, ArrowDown, Circle } from "lucide-react";
-import { useAppDispatch } from "../../store";
-import { applyLayout } from "../../store/mindmapSlice";
+import { Settings, ChevronDown, ChevronRight, ArrowRight, ArrowDown } from "lucide-react";
 import { useNoteIndicatorToggle } from "../../hooks/useNoteIndicatorToggle";
+import { useLayoutChange } from "../../hooks/useLayoutChange";
 
 export function SettingsMenuSection() {
   const [isOpen, setIsOpen] = useState(false);
-  const dispatch = useAppDispatch();
   const { showNoteIndicator, toggleNoteIndicator } = useNoteIndicatorToggle();
+  const { setHorizontalLayout, setVerticalLayout } = useLayoutChange();
 
   const createHandler = useCallback(
     (callback: () => void) => () => {
@@ -18,10 +17,6 @@ export function SettingsMenuSection() {
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleLayoutChange = (layout: "LR" | "TB" | "RADIAL") => {
-    dispatch(applyLayout(layout));
   };
 
   return (
@@ -64,7 +59,7 @@ export function SettingsMenuSection() {
           </div>
           
           <button
-            onClick={createHandler(() => handleLayoutChange("LR"))}
+            onClick={createHandler(setHorizontalLayout)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors duration-200 touch-manipulation"
           >
             <ArrowRight className="h-4 w-4" />
@@ -72,19 +67,11 @@ export function SettingsMenuSection() {
           </button>
           
           <button
-            onClick={createHandler(() => handleLayoutChange("TB"))}
+            onClick={createHandler(setVerticalLayout)}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors duration-200 touch-manipulation"
           >
             <ArrowDown className="h-4 w-4" />
             <span className="text-sm">Vertical Layout</span>
-          </button>
-          
-          <button
-            onClick={createHandler(() => handleLayoutChange("RADIAL"))}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-slate-700 hover:text-white transition-colors duration-200 touch-manipulation"
-          >
-            <Circle className="h-4 w-4" />
-            <span className="text-sm">Radial Layout</span>
           </button>
         </div>
       )}

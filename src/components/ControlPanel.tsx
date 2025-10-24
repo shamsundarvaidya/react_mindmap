@@ -1,10 +1,6 @@
-// (No store usage needed directly here after refactor)
-import { useState, useEffect, useRef } from "react";
 import NodeMenu from "./controlPanel/NodeMenu";
 import AppMenu from "./controlPanel/AppMenu";
 import Logo from "./common/Logo";
-import { Button } from "../components/ui/button";
-import { TextAlignJustify } from "lucide-react";
 import {Sidebar} from "./Sidebar";
 
 const ControlPanel = () => {
@@ -22,10 +18,10 @@ const ControlPanel = () => {
             <AppMenu />
           </div>
 
-          {/* 
+          
           <div className="flex items-center gap-3">
             <NodeMenu />     
-          </div> */}
+          </div> 
         </div>
       </div>
     </>
