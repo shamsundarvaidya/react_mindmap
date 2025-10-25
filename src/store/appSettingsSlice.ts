@@ -58,18 +58,13 @@ export default appSettingsSlice.reducer;
 // Thunk to apply a node color scheme based on node depth
 import type { AppDispatch, RootState } from '.';
 import { updateColor } from './mindmapSlice';
+import { COLOR_SCHEMES } from '../constants/themes';
 
 export const applyColorScheme = (schemeName: string) => (dispatch: AppDispatch, getState: () => RootState) => {
   const state = getState();
   const nodes = state.mindmap.nodes;
   const edges = state.mindmap.edges;
-  const schemes: Record<string, string[]> = {
-    Pastel: ['#FFEEAD', '#AEDFF7', '#C3F7C0', '#F7C2E7', '#FFF1C1'],
-    Vibrant: ['#FF6B6B', '#4D96FF', '#6BCB77', '#FFD93D', '#845EC2'],
-    Blues: ['#DCEEFB', '#B6E0FE', '#84C5F4', '#62B0E8', '#3A8DDE'],
-    Sunset: ['#FFADAD', '#FFD6A5', '#FDFFB6', '#BDE0FE', '#A0C4FF'],
-  };
-  const palette = schemes[schemeName];
+  const palette = COLOR_SCHEMES[schemeName];
   if (!palette) return;
   // Compute depths
   const inDegree = new Map<string, number>();

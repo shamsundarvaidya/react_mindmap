@@ -1,15 +1,9 @@
 import { useColorScheme } from "../../hooks/useColorScheme";
+import { THEME_OPTIONS } from "../../constants/themes";
 
 interface ThemeSelectorProps {
   onSelect: () => void;
 }
-
-const THEME_OPTIONS = [
-  { scheme: 'Pastel', emoji: '🎨', label: 'Pastel' },
-  { scheme: 'Vibrant', emoji: '🔥', label: 'Vibrant' },
-  { scheme: 'Blues', emoji: '💧', label: 'Blues' },
-  { scheme: 'Sunset', emoji: '🌅', label: 'Sunset' },
-];
 
 export function ThemeSelector({ onSelect }: ThemeSelectorProps) {
   const { applyScheme } = useColorScheme();
@@ -21,11 +15,11 @@ export function ThemeSelector({ onSelect }: ThemeSelectorProps) {
 
   return (
     <>
-      {THEME_OPTIONS.map(({ scheme, emoji, label }) => (
+      {THEME_OPTIONS.map(({ name, emoji, label }) => (
         <button
-          key={scheme}
+          key={name}
           className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-md text-slate-300 hover:bg-slate-700 hover:text-white text-sm transition-colors duration-200"
-          onClick={() => handleSchemeSelect(scheme)}
+          onClick={() => handleSchemeSelect(name)}
         >
           <span className="text-lg">{emoji}</span>
           <span>{label}</span>

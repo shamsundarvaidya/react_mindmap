@@ -3,7 +3,7 @@ import { initialState } from "./mindmapInitialState";
 import { selectNodeInMap, applyNodeChangesAction } from "./reducers/nodeReducers";
 import { applyEdgeChangesAction } from "./reducers/edgeReducers";
 import { deleteNodeAndDescendants } from "./reducers/deleteReducers";
-import { addChildNodeToMap, addSiblingNodeToMap } from "./reducers/addNodeReducers";
+import { addChildNodeToMap } from "./reducers/addNodeReducers";
 import { applyLayoutToMap } from "./reducers/layoutReducers";
 import { updateNodeLabel, updateNodeColor,updateNodeNote, toggleNodeCollapse } from "./reducers/updateReducers";
 import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } from "./reducers/storageReducers";
@@ -19,7 +19,7 @@ import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } 
     applyEdgeChangesAction,
     deleteNodeAndDescendants,
     addChildNodeToMap,
-    addSiblingNodeToMap,
+    //addSiblingNodeToMap,
     updateNodeColor,
     updateNodeLabel,
     clearMindMap,
@@ -39,7 +39,7 @@ export const {
   applyEdgeChangesAction: applyEdgeChanges,
   deleteNodeAndDescendants: deleteNode,
   addChildNodeToMap: addNode,
-  addSiblingNodeToMap: addSiblingNode,
+  //addSiblingNodeToMap: addSiblingNode,
   updateNodeColor: updateColor,
   updateNodeLabel: updateLabel,
   clearMindMap: clear,
