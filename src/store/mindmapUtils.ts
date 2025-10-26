@@ -1,24 +1,7 @@
 import type { Node, Edge } from "@xyflow/react";
 import type { NodeData } from "../types/mindmap";
 
-/**
- * Finds all descendants (including the node itself) of a given node in the edge list.
- */
-export function findAllDescendants(nodeId: string, edges: Edge[]): Set<string> {
-  const descendants = new Set<string>();
-  const queue = [nodeId];
-
-  while (queue.length > 0) {
-    const current = queue.shift()!;
-    descendants.add(current);
-    const children = edges.filter((e) => e.source === current).map((e) => e.target);
-    queue.push(...children);
-  }
-
-  return descendants;
-}
-
-// NEW: compute hidden node ids based on collapsed nodes
+// Helper: compute hidden node ids based on collapsed nodes
 export function getHiddenNodeIds(
   nodes: Node<NodeData>[],
   edges: Edge[],
@@ -27,14 +10,24 @@ export function getHiddenNodeIds(
   const collapsedIds = nodes.filter(n => n.data?.collapsed).map(n => n.id);
 
   for (const cid of collapsedIds) {
-    const all = findAllDescendants(cid, edges);
-    all.delete(cid); // do not hide the collapsed node itself
-    for (const id of all) hidden.add(id);
+    // Find all descendants inline
+    const descendants = new Set<string>();
+    const queue = [cid];
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      descendants.add(current);
+      const children = edges.filter((e) => e.source === current).map((e) => e.target);
+      queue.push(...children);
+    }
+    
+    descendants.delete(cid); // do not hide the collapsed node itself
+    for (const id of descendants) hidden.add(id);
   }
   return hidden;
 }
 
-// NEW: filter nodes/edges to visible ones
+// Filter nodes/edges to visible ones
 export function filterVisibleGraph(
   nodes: Node<NodeData>[],
   edges: Edge[],

@@ -1,8 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../store";
-import { setShowNoteIndicator } from "../store/appSettingsSlice";
+import { setShowNoteIndicator } from "../store/noteIndicatorSlice";
 
 export function useNoteIndicatorToggle() {
-  const showNoteIndicator = useAppSelector((state) => state.appSettings.showNoteIndicator);
+  const showNoteIndicator = useAppSelector((state) => state.noteIndicator.showNoteIndicator);
   const dispatch = useAppDispatch();
 
   const toggleNoteIndicator = (checked: boolean) => {

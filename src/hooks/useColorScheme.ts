@@ -1,33 +1,24 @@
-import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { updateColor } from '../store/mindmapSlice';
-import { applyColorScheme, setColorScheme } from '../store/appSettingsSlice';
+import { setTheme } from '../store/themeSlice';
+import { THEME_OPTIONS } from '../constants/themes';
 
 export function useColorScheme() {
   const dispatch = useAppDispatch();
-  const { edges, nodes } = useAppSelector((s) => s.mindmap);
-  const { colorScheme } = useAppSelector((s) => s.appSettings);
+  const selectedTheme = useAppSelector(state => state.theme.selectedTheme);
 
   const applyScheme = (schemeName: string) => {
-    dispatch(applyColorScheme(schemeName));
+    // Simply set the theme - nodes will re-render with new colors automatically
+    dispatch(setTheme(schemeName));
   };
 
   const resetColors = () => {
-    nodes.forEach((n) => dispatch(updateColor({ id: n.id, color: '#D3D3D3' })));
-    dispatch(setColorScheme(null));
+    // Reset to default theme - nodes will re-render with default colors
+    dispatch(setTheme(THEME_OPTIONS[0].name));
   };
-
-  // Re-apply scheme when graph size changes so new nodes adopt colors
-  useEffect(() => {
-    if (colorScheme) {
-      dispatch(applyColorScheme(colorScheme));
-    }
-     
-  }, [nodes.length, edges.length, colorScheme, dispatch]);
 
   return {
     applyScheme,
     resetColors,
-    currentColorScheme: colorScheme,
+    currentColorScheme: selectedTheme,
   };
 }

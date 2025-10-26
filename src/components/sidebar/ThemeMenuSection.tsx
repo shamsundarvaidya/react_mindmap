@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Palette, ChevronDown, ChevronRight } from "lucide-react";
 import { ThemeSelector } from '../theme/ThemeSelector';
-import { BackgroundColorPicker } from '../theme/BackgroundColorPicker';
 import { EdgeAnimationToggle } from '../theme/EdgeAnimationToggle';
 import { ColorResetButton } from '../theme/ColorResetButton';
 
@@ -47,11 +46,10 @@ export function ThemeMenuSection() {
           <div className="my-2 border-t border-slate-700"></div>
           
           <div className="px-2 py-1">
-            <span className="text-xs uppercase tracking-wide text-slate-500 font-medium">Background & Effects</span>
+            <span className="text-xs uppercase tracking-wide text-slate-500 font-medium">Effects</span>
           </div>
           
           <div className="px-1 py-2 space-y-2">
-            <BackgroundColorPicker onSelect={handleThemeSelect} />
             <EdgeAnimationToggle />
           </div>
           

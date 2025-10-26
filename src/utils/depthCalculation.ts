@@ -58,3 +58,20 @@ export function getNodesWithDepths(
     depth: depthMap.get(node.id) || 0
   }));
 }
+
+/**
+ * Update nodes with calculated depth values
+ */
+export function updateNodesWithDepth(
+  nodes: Node<NodeData>[], 
+  edges: Edge[]
+): Node<NodeData>[] {
+  const depthMap = calculateNodeDepths(nodes, edges);
+  return nodes.map(node => ({
+    ...node,
+    data: {
+      ...node.data,
+      depth: depthMap.get(node.id) || 0
+    }
+  }));
+}

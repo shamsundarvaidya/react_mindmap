@@ -1,5 +1,6 @@
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
-import { useAppSelector, useAppDispatch } from "../store";
+import { useAppDispatch, useAppSelector } from '../store';
+import { setTheme, setEdgesAnimated } from '../store/themeSlice';
 import {
   selectNode,
   applyEdgeChanges,
@@ -22,7 +23,7 @@ import * as htmlToImage from "html-to-image";
 import "@xyflow/react/dist/style.css";
 import type { NodeData } from "../types/mindmap";
 import { setExportHandler } from "../store/exportStore";
-import { filterVisibleGraph } from "../store/mindmapUtils";
+import { useVisibleGraph } from "../hooks/useVisibleGraph";
 
 
 const nodeTypes = {
@@ -30,19 +31,15 @@ const nodeTypes = {
 };
 
 const MindMap = () => {
-  const { nodes, edges } = useAppSelector((state) => state.mindmap);
-  const { canvasBg, edgesAnimated } = useAppSelector(state => state.appSettings);
+  const canvasBg = useAppSelector(state => state.theme.backgroundColor);
+  const edgesAnimated = useAppSelector(state => state.theme.edgesAnimated);
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  // edgesAnimated now from store
 
   const dispatch = useAppDispatch();
 
   // Compute visible subgraph (hide descendants of collapsed nodes)
-  const { nodes: visibleNodes, edges: visibleEdges } = useMemo(
-    () => filterVisibleGraph(nodes as any, edges as any),
-    [nodes, edges]
-  );
+  const { nodes: visibleNodes, edges: visibleEdges } = useVisibleGraph();
 
   const nodesById = useMemo(() => {
     const map = new Map<string, Node<NodeData>>();
@@ -109,7 +106,19 @@ const MindMap = () => {
     if (saved) {
       try {
         const parsed = JSON.parse(saved);
+        
+        // Load mindmap data (nodes, edges, layout)
         dispatch(loadMindMap(parsed));
+        
+        // Load theme settings if available
+        if (parsed.theme) {
+          if (parsed.theme.selectedTheme) {
+            dispatch(setTheme(parsed.theme.selectedTheme));
+          }
+          if (parsed.theme.edgesAnimated !== undefined) {
+            dispatch(setEdgesAnimated(parsed.theme.edgesAnimated));
+          }
+        }
       } catch {
         console.warn("Invalid mind map data in localStorage.");
       }

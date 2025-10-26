@@ -9,24 +9,7 @@ export function addChildNodeToMap(state: MindMapState) {
   const parentNode = state.nodes.find((n: Node<NodeData>) => n.id === parentId);
   if (!parentNode) return;
   
-  // Get current color scheme from localStorage (same as appSettingsSlice)
-  const getColorScheme = () => {
-    try {
-      if (typeof window !== 'undefined') {
-        const scheme = window.localStorage.getItem('node-color-scheme');
-        return scheme || null;
-      }
-    } catch {}
-    return null;
-  };
-  
-  const colorScheme = getColorScheme();
-  const { node, edge }: NodeWithEdge = createChildNodeWithEdge(
-    parentNode, 
-    state.nodes as Node<NodeData>[], 
-    state.edges as Edge[], 
-    colorScheme
-  );
+  const { node, edge }: NodeWithEdge = createChildNodeWithEdge(parentNode);
   
   state.nodes.push(node);
   state.edges.push(edge);
@@ -37,29 +20,13 @@ export function addSiblingNodeToMap(state: MindMapState) {
   if (!siblingId) return;
 
   const siblingNode = state.nodes.find((n: Node<NodeData>) => n.id === siblingId);
-
   if (!siblingNode) return;
 
   const siblingEdge = state.edges.find((e: Edge) => e.target === siblingId);
   if (siblingEdge) {
-    // Get current color scheme from localStorage (same as appSettingsSlice)
-    const getColorScheme = () => {
-      try {
-        if (typeof window !== 'undefined') {
-          const scheme = window.localStorage.getItem('node-color-scheme');
-          return scheme || null;
-        }
-      } catch {}
-      return null;
-    };
-    
-    const colorScheme = getColorScheme();
     const { node, edge }: NodeWithEdge = createSiblingNodeWithEdge(
       siblingNode,
-      siblingEdge,
-      state.nodes as Node<NodeData>[], 
-      state.edges as Edge[], 
-      colorScheme
+      siblingEdge
     );
     
     state.nodes.push(node);

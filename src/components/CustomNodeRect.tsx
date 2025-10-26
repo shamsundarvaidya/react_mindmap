@@ -3,19 +3,37 @@ import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { applyLayout, updateLabel, toggleCollapse } from '../store/mindmapSlice';
 import type { NodeData } from '../types/mindmap';
-import { findAllDescendants } from '../store/mindmapUtils'; // NEW
+import { getThemeByName } from '../constants/themes';
+import { useNodeChildren } from '../hooks/useNodeDescendants';
 
 const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
   const selectedNodeId = useAppSelector((state) => state.mindmap.selectedNodeId);
-  const showNoteIndicator = useAppSelector((state) => state.appSettings?.showNoteIndicator);
+  const showNoteIndicator = useAppSelector((state) => state.noteIndicator?.showNoteIndicator);
   const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
+  const selectedTheme = useAppSelector((state) => state.theme.selectedTheme);
   const dispatch = useAppDispatch();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(data.label);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const backgroundColor = (data.color as string) || '#ffffff';
+  // Calculate color from depth and selected theme
+  const calculateNodeColor = () => {
+    if (data.color) {
+      return data.color; // Use stored color if available
+    }
+    
+    const theme = getThemeByName(selectedTheme);
+    if (!theme) {
+      return '#D3D3D3'; // Default color
+    }
+    
+    const depth = data.depth ?? 0;
+    const palette = theme.colors;
+    return palette[depth % palette.length];
+  };
+
+  const backgroundColor = calculateNodeColor();
   const isSelected = id === selectedNodeId;
 
   // Helpers to derive theme-matching highlight colors
@@ -61,13 +79,14 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
     setEditing(true);
   };
   // Child relations
-  const edges = useAppSelector((state) => state.mindmap.edges); // NEW
-  const hasChildren = edges.some((e) => e.source === id); // NEW
+  const edges = useAppSelector((state) => state.mindmap.edges);
+  const hasChildren = edges.some((e) => e.source === id);
+  
+  // Get all descendants (excluding the node itself) using the hook
+  const childrenIds = useNodeChildren(id);
+  
   // Hidden descendant count when collapsed
-  const hiddenCount = React.useMemo( // NEW
-    () => (data.collapsed ? Math.max(0, findAllDescendants(id, edges).size - 1) : 0),
-    [data.collapsed, id, edges]
-  );
+  const hiddenCount = data.collapsed ? childrenIds.size : 0;
 
   const handleBlur = () => {
     dispatch(updateLabel({ id, label: value }));

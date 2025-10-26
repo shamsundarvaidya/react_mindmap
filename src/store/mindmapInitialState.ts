@@ -1,5 +1,4 @@
 import type { MindMapState } from "../types/mindmap";
-import { getDefaultColor } from "../constants/themes";
 
 export const initialState: MindMapState = {
   nodes: [
@@ -10,7 +9,7 @@ export const initialState: MindMapState = {
       data: { 
         label: "Root Node", 
         collapsed: false,
-        color: getDefaultColor() // Default to first color of Pastel scheme
+        depth: 0 // Root node is always at depth 0
       },
     },
   ],

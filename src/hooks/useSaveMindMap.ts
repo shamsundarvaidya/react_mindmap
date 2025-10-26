@@ -1,11 +1,11 @@
 import { useAppDispatch } from "../store";
-import { saveMindMap } from "../store/mindmapSlice";
+import { saveAllDataToLocalStorage } from "../store/reducers/storageReducers";
 
 export const useSaveMindMap = () => {
   const dispatch = useAppDispatch();
 
   const handleSave = () => {
-    dispatch(saveMindMap());
+    dispatch(saveAllDataToLocalStorage());
     alert("Mind map saved!");
   };
 

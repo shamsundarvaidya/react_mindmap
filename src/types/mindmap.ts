@@ -6,6 +6,7 @@ export interface NodeData extends Record<string, unknown> {
   color?: string;
   note?: string; 
   collapsed?: boolean; // NEW: collapse state
+  depth?: number; // NEW: node depth in tree (for theme coloring)
 }
 
 

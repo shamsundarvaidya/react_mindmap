@@ -7,7 +7,6 @@ import {
 } from "../ui/dropdown-menu";
 import { ChevronDown, Palette } from 'lucide-react';
 import { ThemeSelector } from '../theme/ThemeSelector';
-import { BackgroundColorPicker } from '../theme/BackgroundColorPicker';
 import { EdgeAnimationToggle } from '../theme/EdgeAnimationToggle';
 import { ColorResetButton } from '../theme/ColorResetButton';
 import { cn } from "../../lib/utils";
@@ -53,11 +52,10 @@ const ThemeMenu = () => {
         <DropdownMenuSeparator className="bg-slate-700" />
         
         <DropdownMenuLabel className="text-xs uppercase tracking-wide text-slate-500 font-medium">
-          Background & Effects
+          Effects
         </DropdownMenuLabel>
         
         <div className="p-1">
-          <BackgroundColorPicker onSelect={handleClose} />
           <EdgeAnimationToggle />
         </div>
         
