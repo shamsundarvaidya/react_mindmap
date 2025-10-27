@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { setShowNoteIndicatorReducer } from './reducers/noteIndicatorReducers';
 
 export interface NoteIndicatorState {
   showNoteIndicator: boolean;
@@ -13,9 +13,7 @@ const noteIndicatorSlice = createSlice({
   name: 'noteIndicator',
   initialState,
   reducers: {
-    setShowNoteIndicator(state, action: PayloadAction<boolean>) {
-      state.showNoteIndicator = action.payload;
-    },
+    setShowNoteIndicator: setShowNoteIndicatorReducer,
   },
 });
 

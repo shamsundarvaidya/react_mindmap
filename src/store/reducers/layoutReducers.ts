@@ -6,15 +6,7 @@ import type { NodeData } from "../../types/mindmap";
 import { filterVisibleGraph } from "../mindmapUtils";
 import { calculateNodeDepths } from "../../utils/depthCalculation";
 
-// export function applyLayoutToMap(state: MindMapState) {
-//   const { nodes, edges } = getLayoutedElements(
-//     state.nodes,
-//     state.edges,
-//     "LR"
-//   );
-//   state.nodes = nodes;
-//   state.edges = edges;
-// }
+
 
 export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR" | "TB" | "None">) {
   const direction = action.payload === "None" ? (state.layoutDirection || "LR") : action.payload;

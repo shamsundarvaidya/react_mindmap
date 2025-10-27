@@ -1,11 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialState } from "./mindmapInitialState";
-import { selectNodeInMap, applyNodeChangesAction } from "./reducers/nodeReducers";
+import { selectNodeInMap, applyNodeChangesAction, updateNodeLabel, updateNodeColor, toggleNodeCollapse, addChildNodeToMap, deleteNodeAndDescendants } from "./reducers/nodeReducers";
 import { applyEdgeChangesAction } from "./reducers/edgeReducers";
-import { deleteNodeAndDescendants } from "./reducers/deleteReducers";
-import { addChildNodeToMap } from "./reducers/addNodeReducers";
 import { applyLayoutToMap } from "./reducers/layoutReducers";
-import { updateNodeLabel, updateNodeColor,updateNodeNote, toggleNodeCollapse } from "./reducers/updateReducers";
+import { updateNodeNote } from "./reducers/noteReducers";
 import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage } from "./reducers/storageReducers";
 
 

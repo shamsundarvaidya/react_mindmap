@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
 import { THEME_OPTIONS } from '../constants/themes';
+import { setThemeReducer, setEdgesAnimatedReducer } from './reducers/themeReducers';
 
 export interface ThemeState {
   selectedTheme: string;
@@ -18,18 +18,8 @@ const themeSlice = createSlice({
   name: 'theme',
   initialState,
   reducers: {
-    setTheme(state, action: PayloadAction<string>) {
-      const themeName = action.payload;
-      // Validate theme exists in THEME_OPTIONS
-      const theme = THEME_OPTIONS.find(t => t.name === themeName);
-      if (theme) {
-        state.selectedTheme = themeName;
-        state.backgroundColor = theme.background;
-      }
-    },
-    setEdgesAnimated(state, action: PayloadAction<boolean>) {
-      state.edgesAnimated = action.payload;
-    },
+    setTheme: setThemeReducer,
+    setEdgesAnimated: setEdgesAnimatedReducer,
   },
 });
 
