@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Handle, Position, type NodeProps, type Node } from '@xyflow/react';
 import { useAppDispatch, useAppSelector } from '../store';
-import { applyLayout, updateLabel, toggleCollapse } from '../store/mindmapSlice';
+import { updateLabel, applyLayout } from '../store/mindmapSlice';
 import type { NodeData } from '../types/mindmap';
 import { getThemeByName } from '../constants/themes';
-import { useNodeChildren } from '../hooks/useNodeDescendants';
+import { getNodeChildren } from '../utils/nodeUtils';
+import { useToggleCollapse } from '../hooks/useToggleCollapse';
 
 const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
@@ -13,6 +14,7 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
   const selectedTheme = useAppSelector((state) => state.theme.selectedTheme);
   const dispatch = useAppDispatch();
+  const { handleToggleCollapse } = useToggleCollapse();
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(data.label);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -82,8 +84,8 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const edges = useAppSelector((state) => state.mindmap.edges);
   const hasChildren = edges.some((e) => e.source === id);
   
-  // Get all descendants (excluding the node itself) using the hook
-  const childrenIds = useNodeChildren(id);
+  // Get all descendants (excluding the node itself)
+  const childrenIds = getNodeChildren(id, edges);
   
   // Hidden descendant count when collapsed
   const hiddenCount = data.collapsed ? childrenIds.size : 0;
@@ -123,7 +125,10 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
       {hasChildren && (
         <button
           title={data.collapsed ? 'Expand' : 'Collapse'}
-          onClick={(e) => { e.stopPropagation(); dispatch(toggleCollapse(id)); dispatch(applyLayout("None")); }}
+          onClick={(e) => { 
+            e.stopPropagation(); 
+            handleToggleCollapse(id);
+          }}
           onDoubleClick={(e) => e.stopPropagation()}
           className="absolute top-1 left-1 text-[11px] leading-none px-1.5 py-0.5 rounded bg-slate-200 hover:bg-slate-300 text-slate-700 shadow"
           style={{ zIndex: 3 }}

@@ -1,17 +1,27 @@
 import { useAppDispatch, useAppSelector } from "../store";
 import { deleteNode, applyLayout } from "../store/mindmapSlice";
-import { useNodeDescendants } from "./useNodeDescendants";
 
 export function useDeleteNode() {
   const dispatch = useAppDispatch();
   const selectedNodeId = useAppSelector((state) => state.mindmap.selectedNodeId);
   const edges = useAppSelector((state) => state.mindmap.edges);
-  
-  // Get all descendants of the selected node
-  const descendants = useNodeDescendants(selectedNodeId || '');
 
   const isRootNode = (id: string) => {
     return !edges.some((e) => e.target === id);
+  };
+
+  const getNodeDescendants = (nodeId: string): string[] => {
+    const descendants = new Set<string>();
+    const queue = [nodeId];
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      descendants.add(current);
+      const children = edges.filter((e) => e.source === current).map((e) => e.target);
+      queue.push(...children);
+    }
+
+    return Array.from(descendants);
   };
 
   const handleDeleteNode = () => {
@@ -27,16 +37,15 @@ export function useDeleteNode() {
     );
     
     if (confirmed) {
-      // Convert Set to Array and pass to deleteNode
-      dispatch(deleteNode(Array.from(descendants)));
+      // Calculate descendants only when actually deleting
+      const descendants = getNodeDescendants(selectedNodeId);
+      dispatch(deleteNode(descendants));
       dispatch(applyLayout("None"));
     }
   };
 
   return {
     handleDeleteNode,
-    selectedNodeId,
     canDeleteNode: !!selectedNodeId,
-    isRootSelected: selectedNodeId ? isRootNode(selectedNodeId) : false,
   };
 }

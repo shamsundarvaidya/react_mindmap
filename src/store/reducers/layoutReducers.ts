@@ -34,8 +34,8 @@ export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR"
   
   // Calculate node depths for theme coloring
   const depthMap = calculateNodeDepths(
-    state.nodes as unknown as Node<NodeData>[], 
-    state.edges as unknown as Edge[]
+    state.nodes, 
+    state.edges
   );
   
   // Update node positions and depths

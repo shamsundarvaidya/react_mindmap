@@ -2,7 +2,6 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 import type { MindMapState, NodeData } from "../../types/mindmap";
 import type { Node, NodeChange, Edge } from "@xyflow/react";
 import { applyNodeChanges } from "@xyflow/react";
-import { getHiddenNodeIds } from "../mindmapUtils";
 import { createChildNodeWithEdge, createSiblingNodeWithEdge, type NodeWithEdge } from "../../utils/nodeHelper";
 
 export function selectNodeInMap(state: MindMapState, action: PayloadAction<string>) {
@@ -54,13 +53,26 @@ export function toggleNodeCollapse(
   const node = state.nodes.find((n: Node<NodeData>) => n.id === id);
   if (!node) return;
 
+  // Toggle collapse state
   const next = !node.data?.collapsed;
   node.data = { ...node.data, collapsed: next };
 
-  // If collapsing hides the currently selected node, reselect the toggled node
-  if (next) {
-    const hidden = getHiddenNodeIds(state.nodes as any, state.edges);
-    if (state.selectedNodeId && hidden.has(state.selectedNodeId)) {
+  // If expanding, no need to check selection
+  // If collapsing and it might hide selected node, check and reselect if needed
+  if (next && state.selectedNodeId) {
+    // Find all descendants of collapsed node
+    const descendants = new Set<string>();
+    const queue = [id];
+
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      descendants.add(current);
+      const children = state.edges.filter((e) => e.source === current).map((e) => e.target);
+      queue.push(...children);
+    }
+
+    // If selected node will be hidden, reselect the collapsed node
+    if (descendants.has(state.selectedNodeId) && state.selectedNodeId !== id) {
       state.selectedNodeId = id;
     }
   }
