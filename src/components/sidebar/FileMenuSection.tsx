@@ -5,12 +5,13 @@ import { useSaveMindMap } from "../../hooks/useSaveMindMap";
 import { useExportToPng } from "../../hooks/useExportToPng";
 import { useExportToJson } from "../../hooks/useExportToJson";
 import { useImportFromJson } from "../../hooks/useImportFromJson";
+import { ClearMindMapDialog } from "../common/ClearMindMapDialog";
 
 export function FileMenuSection() {
   const [isOpen, setIsOpen] = useState(false);
   
   // File menu hooks
-  const handleClear = useClearMindMap();
+  const { isDialogOpen, openDialog, closeDialog, confirmClear } = useClearMindMap();
   const { handleSave } = useSaveMindMap();
   const { handleExportPng } = useExportToPng();
   const { handleExportToJson } = useExportToJson();
@@ -82,7 +83,7 @@ export function FileMenuSection() {
           <div className="my-2 border-t border-slate-700"></div>
           
           <button
-            onClick={createHandler(handleClear)}
+            onClick={openDialog}
             className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors duration-200 touch-manipulation"
           >
             <Trash2 className="h-4 w-4" />
@@ -98,6 +99,13 @@ export function FileMenuSection() {
         accept="application/json"
         onChange={handleUpload}
         className="hidden"
+      />
+
+      {/* Clear Mind Map Confirmation Dialog */}
+      <ClearMindMapDialog
+        isOpen={isDialogOpen}
+        onClose={closeDialog}
+        onConfirm={confirmClear}
       />
     </div>
   );

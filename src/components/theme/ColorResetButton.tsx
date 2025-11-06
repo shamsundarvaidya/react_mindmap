@@ -5,10 +5,10 @@ interface ColorResetButtonProps {
 }
 
 export function ColorResetButton({ onSelect }: ColorResetButtonProps) {
-  const { resetColors } = useColorScheme();
+  const { resetToDefaultTheme } = useColorScheme();
 
   const handleReset = () => {
-    resetColors();
+    resetToDefaultTheme();
     onSelect();
   };
 
@@ -18,7 +18,7 @@ export function ColorResetButton({ onSelect }: ColorResetButtonProps) {
       onClick={handleReset}
     >
       <span className="text-lg">↩️</span>
-      <span>Reset colors</span>
+      <span>Reset to default theme</span>
     </button>
   );
 }

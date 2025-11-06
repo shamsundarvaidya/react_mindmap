@@ -6,6 +6,7 @@ import type { NodeData } from '../types/mindmap';
 import { getThemeByName } from '../constants/themes';
 import { getNodeChildren } from '../utils/nodeUtils';
 import { useToggleCollapse } from '../hooks/useToggleCollapse';
+import { LAYOUT_TYPES } from '../constants/layouts';
 
 const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
   const { id, data } = props;
@@ -92,7 +93,7 @@ const CustomNodeRect: React.FC<NodeProps<Node<NodeData>>> = (props) => {
 
   const handleBlur = () => {
     dispatch(updateLabel({ id, label: value }));
-    dispatch(applyLayout("None"));
+    dispatch(applyLayout(LAYOUT_TYPES.NONE));
     setEditing(false);
   };
 

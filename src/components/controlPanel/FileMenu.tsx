@@ -13,7 +13,7 @@ import {
   Download, 
   Image, 
   Upload, 
-  Trash2 
+  Trash2
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useClearMindMap } from "../../hooks/useClearMindMap";
@@ -21,12 +21,13 @@ import { useSaveMindMap } from "../../hooks/useSaveMindMap";
 import { useExportToPng } from "../../hooks/useExportToPng";
 import { useExportToJson } from "../../hooks/useExportToJson";
 import { useImportFromJson } from "../../hooks/useImportFromJson";
+import { ClearMindMapDialog } from "../common/ClearMindMapDialog";
 
 const FileMenu: React.FC<{ children?: React.ReactNode }> & {
   Toggle: React.FC;
   Dropdown: React.FC;
 } = () => {
-  const handleClear = useClearMindMap();
+  const { isDialogOpen, openDialog, closeDialog, confirmClear } = useClearMindMap();
   const { handleSave } = useSaveMindMap();
   const { handleExportPng } = useExportToPng();
   const { handleExportToJson } = useExportToJson();
@@ -40,7 +41,8 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
   );
 
   return (
-    <DropdownMenu>
+    <>
+      <DropdownMenu>
       <DropdownMenuTrigger className={cn(
         "inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md text-sm transition-colors",
         "hover:bg-slate-600 text-slate-100 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2"
@@ -103,7 +105,7 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
         <DropdownMenuSeparator className="bg-slate-700 my-2" />
         
         <DropdownMenuItem 
-          onClick={createHandler(handleClear)}
+          onClick={openDialog}
           className="hover:bg-red-500/20 text-red-400 focus:bg-red-500/20 focus:text-red-400 cursor-pointer"
         >
           <Trash2 className="mr-3 h-4 w-4" />
@@ -111,6 +113,13 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+      <ClearMindMapDialog
+        isOpen={isDialogOpen}
+        onClose={closeDialog}
+        onConfirm={confirmClear}
+      />
+    </>
   );
 };
 

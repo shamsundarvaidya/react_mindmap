@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useAppDispatch } from '../store';
 import { toggleCollapse, applyLayout } from '../store/mindmapSlice';
+import { LAYOUT_TYPES } from '../constants/layouts';
 
 /**
  * Hook to handle node collapse/expand with automatic layout update
@@ -17,7 +18,7 @@ export function useToggleCollapse() {
     // Using requestAnimationFrame ensures layout happens after state update
     // This creates a smooth, single-frame transition
     requestAnimationFrame(() => {
-      dispatch(applyLayout("None"));
+      dispatch(applyLayout(LAYOUT_TYPES.NONE));
     });
   }, [dispatch]);
 
