@@ -24,6 +24,7 @@ import "@xyflow/react/dist/style.css";
 import type { NodeData } from "../types/mindmap";
 import { setExportHandler } from "../store/exportStore";
 import { useVisibleGraph } from "../hooks/useVisibleGraph";
+import { getThemeByName } from "../constants/themes";
 
 
 const nodeTypes = {
@@ -33,6 +34,7 @@ const nodeTypes = {
 const MindMap = () => {
   const canvasBg = useAppSelector(state => state.theme.backgroundColor);
   const edgesAnimated = useAppSelector(state => state.theme.edgesAnimated);
+  const selectedTheme = useAppSelector(state => state.theme.selectedTheme);
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -50,12 +52,39 @@ const MindMap = () => {
   }, [visibleNodes]);
 
   const themedEdges = useMemo(() => {
+    const theme = getThemeByName(selectedTheme);
+    
     return visibleEdges.map((e) => {
       const target = nodesById.get(e.target);
-      const stroke = (target?.data as NodeData | undefined)?.color || "#CBD5E1";
-      return { ...e, animated: edgesAnimated, style: { ...(e.style || {}), stroke, strokeWidth: 2.5 } };
+      
+      // Calculate color the same way CustomNodeRect does
+      let stroke = "#CBD5E1"; // default gray
+      
+      if (target?.data) {
+        if (target.data.color) {
+          stroke = target.data.color;
+        } else if (theme) {
+          const depth = target.data.depth ?? 0;
+          const palette = theme.colors;
+          stroke = palette[depth % palette.length];
+        }
+      }
+      
+      return { 
+        ...e, 
+        animated: edgesAnimated, 
+        style: { 
+          ...(e.style || {}), 
+          stroke,
+          strokeWidth: 2.5 
+        },
+        markerEnd: {
+          type: 'arrowclosed' as const,
+          color: stroke,
+        }
+      };
     });
-  }, [visibleEdges, nodesById, edgesAnimated]);
+  }, [visibleEdges, nodesById, edgesAnimated, selectedTheme]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
