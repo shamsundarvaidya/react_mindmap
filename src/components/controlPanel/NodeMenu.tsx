@@ -1,5 +1,5 @@
 
-import EditNote from "./nodeActions/EditNote";
+import EditNode from "./nodeActions/EditNode";
 import { useAddNode } from "../../hooks/useAddNode";
 import { useDeleteNode } from "../../hooks/useDeleteNode";
 import { DeleteNodeDialog } from "../common/DeleteNodeDialog";
@@ -30,7 +30,7 @@ const NodeMenu = () => {
           <span>Delete</span>
         </button>
         
-        <EditNote />
+        <EditNode />
       </div>
 
       <DeleteNodeDialog

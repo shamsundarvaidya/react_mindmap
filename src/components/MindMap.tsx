@@ -9,7 +9,6 @@ import {
 } from "../store/mindmapSlice";
 import CustomNode from "./CustomNode";
 import ControlPanel from "./ControlPanel";
-import MobileNodeMenu from "./controlPanel/MobileNodeMenu";
 import {
   ReactFlow,
   Background,
@@ -167,7 +166,6 @@ const MindMap = () => {
   return (
     <div className="h-screen flex flex-col" ref={containerRef}>
       <ControlPanel  />
-      <MobileNodeMenu />
      
       <div className="flex-1">
         <ReactFlow

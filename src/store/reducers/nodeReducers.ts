@@ -31,6 +31,28 @@ export function updateNodeLabel(
   }
 }
 
+export function updateNodeLeftText(
+  state: MindMapState,
+  action: PayloadAction<{ id: string; leftText: string }>
+) {
+  const { id, leftText } = action.payload;
+  const node = state.nodes.find((n: Node<NodeData>) => n.id === id);
+  if (node) {
+    node.data.left_text = leftText;
+  }
+}
+
+export function updateNodeRightText(
+  state: MindMapState,
+  action: PayloadAction<{ id: string; rightText: string }>
+) {
+  const { id, rightText } = action.payload;
+  const node = state.nodes.find((n: Node<NodeData>) => n.id === id);
+  if (node) {
+    node.data.right_text = rightText;
+  }
+}
+
 export function updateNodeColor(
   state: MindMapState,
   action: PayloadAction<{ id: string; color: string }>

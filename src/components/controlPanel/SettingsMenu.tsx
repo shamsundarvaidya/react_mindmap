@@ -8,13 +8,11 @@ import {
 } from "../ui/dropdown-menu";
 import { useAppDispatch } from "../../store";
 import { applyLayout } from "../../store/mindmapSlice";
-import { useNoteIndicatorToggle } from "../../hooks/useNoteIndicatorToggle";
 import { Settings, ArrowRight, ArrowDown, ChevronDown } from "lucide-react";
 import { cn } from "../../lib/utils";
 
 const SettingsMenu = () => {
   const dispatch = useAppDispatch();
-  const { showNoteIndicator, toggleNoteIndicator } = useNoteIndicatorToggle();
 
   const handleLayoutChange = (layout: "LR" | "TB") => {
     dispatch(applyLayout(layout));
@@ -42,19 +40,7 @@ const SettingsMenu = () => {
         )}
         sideOffset={5}
       >
-        <div className="p-2">
-          <label className="w-full flex items-center gap-2 px-3 py-2 text-slate-300 text-sm cursor-pointer select-none hover:bg-slate-700 rounded-md transition-colors">
-            <input
-              type="checkbox"
-              className="accent-blue-500"
-              checked={showNoteIndicator}
-              onChange={(e) => toggleNoteIndicator(e.target.checked)}
-            />
-            Show note indicator
-          </label>
-        </div>
         
-        <DropdownMenuSeparator className="bg-slate-700" />
         
         <DropdownMenuLabel className="text-xs uppercase tracking-wide text-slate-500 font-medium">
           Layout Settings
