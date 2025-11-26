@@ -36,6 +36,13 @@ export const THEME_OPTIONS: ColorScheme[] = [
     colors: ['#FFADAD', '#FFD6A5', '#FDFFB6', '#BDE0FE', '#A0C4FF'],
     background: '#1E293B' // Warm dark slate for sunset warmth
   },
+  { 
+    name: 'BlackWhite', 
+    emoji: '⚫', 
+    label: 'Black & White', 
+    colors: ['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF'],
+    background: '#FFFFFF' // White background with white nodes and black text/borders
+  },
 ];
 
 // Helper function to get a theme by name

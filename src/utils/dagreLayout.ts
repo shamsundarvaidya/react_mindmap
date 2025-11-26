@@ -13,7 +13,11 @@ export function getDagreLayoutedElements(
   const dagreGraph = new dagre.graphlib.Graph();
   dagreGraph.setDefaultEdgeLabel(() => ({}));
 
-  dagreGraph.setGraph({ rankdir: direction,ranksep: 100,   nodesep: 50, });
+  dagreGraph.setGraph({ 
+    rankdir: direction,
+    ranksep: 100,   // Vertical gap between ranks (horizontal in LR)
+    nodesep: direction === 'TB' ? 150 : 50,   // Horizontal gap (vertical in LR)
+  });
 
   // Set dagre nodes with dynamic size
   nodes.forEach((node) => {

@@ -13,14 +13,18 @@ import {
   Download, 
   Image, 
   Upload, 
-  Trash2
+  Trash2,
+  FileSpreadsheet,
+  FileImage
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useClearMindMap } from "../../hooks/useClearMindMap";
 import { useSaveMindMap } from "../../hooks/useSaveMindMap";
 import { useExportToPng } from "../../hooks/useExportToPng";
+import { useExportToSvg } from "../../hooks/useExportToSvg";
 import { useExportToJson } from "../../hooks/useExportToJson";
 import { useImportFromJson } from "../../hooks/useImportFromJson";
+import { useImportFromCSV } from "../../hooks/useImportFromCSV";
 import { ClearMindMapDialog } from "../common/ClearMindMapDialog";
 
 const FileMenu: React.FC<{ children?: React.ReactNode }> & {
@@ -30,8 +34,10 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
   const { isDialogOpen, openDialog, closeDialog, confirmClear } = useClearMindMap();
   const { handleSave } = useSaveMindMap();
   const { handleExportPng } = useExportToPng();
+  const { handleExportSvg } = useExportToSvg();
   const { handleExportToJson } = useExportToJson();
   const { inputRef, handleUpload, triggerFileSelect } = useImportFromJson();
+  const { inputRef: csvInputRef, handleCSVUpload, triggerCSVFileSelect } = useImportFromCSV();
 
   const createHandler = useCallback(
     (callback: () => void) => () => {
@@ -70,6 +76,8 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
           <span>Save to browser</span>
         </DropdownMenuItem>
         
+        <DropdownMenuSeparator className="bg-slate-700 my-2" />
+        
         <DropdownMenuItem 
           onClick={createHandler(handleExportToJson)}
           className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
@@ -87,6 +95,16 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
         </DropdownMenuItem>
         
         <DropdownMenuItem 
+          onClick={createHandler(handleExportSvg)}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <FileImage className="mr-3 h-4 w-4" />
+          <span>Export as SVG</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuSeparator className="bg-slate-700 my-2" />
+        
+        <DropdownMenuItem 
           onClick={triggerFileSelect}
           className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
         >
@@ -94,13 +112,13 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
           <span>Import from JSON</span>
         </DropdownMenuItem>
         
-        <input
-          ref={inputRef}
-          type="file"
-          accept="application/json"
-          onChange={handleUpload}
-          className="hidden"
-        />
+        <DropdownMenuItem 
+          onClick={triggerCSVFileSelect}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <FileSpreadsheet className="mr-3 h-4 w-4" />
+          <span>Import from CSV</span>
+        </DropdownMenuItem>
         
         <DropdownMenuSeparator className="bg-slate-700 my-2" />
         
@@ -113,6 +131,23 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+
+      {/* Hidden file inputs - must be outside dropdown */}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="application/json"
+        onChange={handleUpload}
+        className="hidden"
+      />
+      
+      <input
+        ref={csvInputRef}
+        type="file"
+        accept=".csv"
+        onChange={handleCSVUpload}
+        className="hidden"
+      />
 
       <ClearMindMapDialog
         isOpen={isDialogOpen}

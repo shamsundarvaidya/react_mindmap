@@ -59,3 +59,17 @@ export function loadMindMapFromLocalStorage(
   state.selectedNodeId = null;
   // Theme data will be handled separately in MindMap component
 }
+
+export function importFromCSV(
+  state: MindMapState,
+  action: PayloadAction<{ nodes: Node<NodeData>[]; edges: Edge[] }>
+) {
+  const { nodes, edges } = action.payload;
+  
+  // Update nodes with depth values
+  const nodesWithDepth = updateNodesWithDepth(nodes, edges);
+  
+  state.nodes = nodesWithDepth;
+  state.edges = edges;
+  state.selectedNodeId = null;
+}

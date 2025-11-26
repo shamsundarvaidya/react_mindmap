@@ -59,7 +59,10 @@ const MindMap = () => {
       // Calculate color the same way CustomNodeRect does
       let stroke = "#CBD5E1"; // default gray
       
-      if (target?.data) {
+      // For Black & White theme, use black edges
+      if (selectedTheme === 'BlackWhite') {
+        stroke = "#000000";
+      } else if (target?.data) {
         if (target.data.color) {
           stroke = target.data.color;
         } else if (theme) {
@@ -71,7 +74,8 @@ const MindMap = () => {
       
       return { 
         ...e, 
-        animated: edgesAnimated, 
+        animated: edgesAnimated,
+        type: 'smoothstep',
         style: { 
           ...(e.style || {}), 
           stroke,
