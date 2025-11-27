@@ -35,7 +35,6 @@ export const saveAllDataToLocalStorage = () => (_dispatch: AppDispatch, getState
     layoutDirection: state.mindmap.layoutDirection,
     theme: {
       selectedTheme: state.theme.selectedTheme,
-      edgesAnimated: state.theme.edgesAnimated,
     },
   };
   localStorage.setItem("mindmap-data", JSON.stringify(data));
@@ -47,7 +46,7 @@ export function loadMindMapFromLocalStorage(
     nodes: Node<NodeData>[]; 
     edges: Edge[]; 
     layoutDirection: 'LR' | 'TB';
-    theme?: { selectedTheme?: string; edgesAnimated?: boolean };
+    theme?: { selectedTheme?: string };
   }>
 ) {
   // Ensure all loaded nodes have depth property

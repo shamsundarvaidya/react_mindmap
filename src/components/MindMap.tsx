@@ -1,6 +1,6 @@
 import React, { useCallback, useRef, useEffect, useMemo } from "react";
 import { useAppDispatch, useAppSelector } from '../store';
-import { setTheme, setEdgesAnimated } from '../store/themeSlice';
+import { setTheme } from '../store/themeSlice';
 import {
   selectNode,
   applyEdgeChanges,
@@ -32,7 +32,6 @@ const nodeTypes = {
 
 const MindMap = () => {
   const canvasBg = useAppSelector(state => state.theme.backgroundColor);
-  const edgesAnimated = useAppSelector(state => state.theme.edgesAnimated);
   const selectedTheme = useAppSelector(state => state.theme.selectedTheme);
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,7 +73,6 @@ const MindMap = () => {
       
       return { 
         ...e, 
-        animated: edgesAnimated,
         type: 'smoothstep',
         style: { 
           ...(e.style || {}), 
@@ -87,7 +85,7 @@ const MindMap = () => {
         }
       };
     });
-  }, [visibleEdges, nodesById, edgesAnimated, selectedTheme]);
+  }, [visibleEdges, nodesById, selectedTheme]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;
@@ -146,9 +144,6 @@ const MindMap = () => {
         if (parsed.theme) {
           if (parsed.theme.selectedTheme) {
             dispatch(setTheme(parsed.theme.selectedTheme));
-          }
-          if (parsed.theme.edgesAnimated !== undefined) {
-            dispatch(setEdgesAnimated(parsed.theme.edgesAnimated));
           }
         }
       } catch {

@@ -11,7 +11,3 @@ export function setThemeReducer(state: ThemeState, action: PayloadAction<string>
     state.backgroundColor = theme.background;
   }
 }
-
-export function setEdgesAnimatedReducer(state: ThemeState, action: PayloadAction<boolean>) {
-  state.edgesAnimated = action.payload;
-}
