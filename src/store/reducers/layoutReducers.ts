@@ -4,7 +4,6 @@ import { getLayoutedPositions } from "../../utils/layoutHelper";
 import type { Node, Edge } from "@xyflow/react";
 import type { NodeData } from "../../types/mindmap";
 import { filterVisibleGraph } from "../mindmapUtils";
-import { calculateNodeDepths } from "../../utils/depthCalculation";
 
 
 
@@ -32,23 +31,15 @@ export function applyLayoutToMap(state: MindMapState, action: PayloadAction<"LR"
     console.log(`${layoutLabel}\n${formatted}`);
   }
   
-  // Calculate node depths for theme coloring
-  const depthMap = calculateNodeDepths(
-    state.nodes, 
-    state.edges
-  );
-  
-  // Update node positions and depths
+  // Update node positions
   state.nodes = state.nodes.map((node) => {
     const pos = positions[node.id];
-    const depth = depthMap.get(node.id) ?? 0;
-    if (!pos) return { ...node, data: { ...node.data, depth } };
+    if (!pos) return node;
     return {
       ...node,
       position: pos.position,
       sourcePosition: pos.sourcePosition,
       targetPosition: pos.targetPosition,
-      data: { ...node.data, depth },
     };
   });
   state.layoutDirection = direction;

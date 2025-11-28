@@ -1,9 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { initialState } from "./mindmapInitialState";
-import { selectNodeInMap, applyNodeChangesAction, updateNodeLabel, updateNodeLeftText, updateNodeRightText, updateNodeColor, toggleNodeCollapse, addChildNodeToMap, deleteNodeAndDescendants } from "./reducers/nodeReducers";
+import { selectNodeInMap, applyNodeChangesAction, updateNodeLabel, updateNodeLeftText, updateNodeRightText, addChildNodeToMap, deleteNodeAndDescendants } from "./reducers/nodeReducers";
 import { applyEdgeChangesAction } from "./reducers/edgeReducers";
 import { applyLayoutToMap } from "./reducers/layoutReducers";
-import { updateNodeNote } from "./reducers/noteReducers";
 import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage, importFromCSV } from "./reducers/storageReducers";
 
 
@@ -17,8 +16,6 @@ import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage, i
     applyEdgeChangesAction,
     deleteNodeAndDescendants,
     addChildNodeToMap,
-    //addSiblingNodeToMap,
-    updateNodeColor,
     updateNodeLabel,
     updateNodeLeftText,
     updateNodeRightText,
@@ -27,8 +24,6 @@ import { clearMindMap, saveMindMapToLocalStorage, loadMindMapFromLocalStorage, i
     applyLayoutToMap,
     loadMindMapFromLocalStorage,
     importFromCSV,
-    updateNodeNote,
-    toggleNodeCollapse, // NEW
   },
 });
 
@@ -40,8 +35,6 @@ export const {
   applyEdgeChangesAction: applyEdgeChanges,
   deleteNodeAndDescendants: deleteNode,
   addChildNodeToMap: addNode,
-  //addSiblingNodeToMap: addSiblingNode,
-  updateNodeColor: updateColor,
   updateNodeLabel: updateLabel,
   updateNodeLeftText: updateLeftText,
   updateNodeRightText: updateRightText,
@@ -50,6 +43,4 @@ export const {
   applyLayoutToMap: applyLayout,
   loadMindMapFromLocalStorage: loadMindMap,
   importFromCSV: importCSV,
-  updateNodeNote: updateNote,
-  toggleNodeCollapse: toggleCollapse, // NEW
 } = mindmapSlice.actions;

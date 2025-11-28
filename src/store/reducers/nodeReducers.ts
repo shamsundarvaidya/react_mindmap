@@ -53,53 +53,6 @@ export function updateNodeRightText(
   }
 }
 
-export function updateNodeColor(
-  state: MindMapState,
-  action: PayloadAction<{ id: string; color: string }>
-) {
-  
-  const node = state.nodes.find((n: Node<NodeData>) => n.id === action.payload.id);
-  if (node) {
-    node.data = {
-      ...node.data,
-      color: action.payload.color,
-    };
-  }
-}
-
-export function toggleNodeCollapse(
-  state: MindMapState,
-  action: PayloadAction<string>
-) {
-  const id = action.payload;
-  const node = state.nodes.find((n: Node<NodeData>) => n.id === id);
-  if (!node) return;
-
-  // Toggle collapse state
-  const next = !node.data?.collapsed;
-  node.data = { ...node.data, collapsed: next };
-
-  // If expanding, no need to check selection
-  // If collapsing and it might hide selected node, check and reselect if needed
-  if (next && state.selectedNodeId) {
-    // Find all descendants of collapsed node
-    const descendants = new Set<string>();
-    const queue = [id];
-
-    while (queue.length > 0) {
-      const current = queue.shift()!;
-      descendants.add(current);
-      const children = state.edges.filter((e) => e.source === current).map((e) => e.target);
-      queue.push(...children);
-    }
-
-    // If selected node will be hidden, reselect the collapsed node
-    if (descendants.has(state.selectedNodeId) && state.selectedNodeId !== id) {
-      state.selectedNodeId = id;
-    }
-  }
-}
-
 export function addChildNodeToMap(state: MindMapState) {
   const parentId = state.selectedNodeId;
   if (!parentId) return;

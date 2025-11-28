@@ -23,7 +23,6 @@ import "@xyflow/react/dist/style.css";
 import type { NodeData } from "../types/mindmap";
 import { setExportHandler } from "../store/exportStore";
 import { useVisibleGraph } from "../hooks/useVisibleGraph";
-import { getThemeByName } from "../constants/themes";
 
 
 const nodeTypes = {
@@ -31,45 +30,20 @@ const nodeTypes = {
 };
 
 const MindMap = () => {
-  const canvasBg = useAppSelector(state => state.theme.backgroundColor);
   const selectedTheme = useAppSelector(state => state.theme.selectedTheme);
+  const canvasBg = selectedTheme.canvasColor;
   const flowRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const dispatch = useAppDispatch();
 
-  // Compute visible subgraph (hide descendants of collapsed nodes)
+  // Get nodes and edges from the graph
   const { nodes: visibleNodes, edges: visibleEdges } = useVisibleGraph();
 
-  const nodesById = useMemo(() => {
-    const map = new Map<string, Node<NodeData>>();
-    if (Array.isArray(visibleNodes)) {
-      visibleNodes.forEach((n) => map.set(n.id, n as Node<NodeData>));
-    }
-    return map;
-  }, [visibleNodes]);
-
   const themedEdges = useMemo(() => {
-    const theme = getThemeByName(selectedTheme);
-    
     return visibleEdges.map((e) => {
-      const target = nodesById.get(e.target);
-      
-      // Calculate color the same way CustomNodeRect does
-      let stroke = "#CBD5E1"; // default gray
-      
-      // For Black & White theme, use black edges
-      if (selectedTheme === 'BlackWhite') {
-        stroke = "#000000";
-      } else if (target?.data) {
-        if (target.data.color) {
-          stroke = target.data.color;
-        } else if (theme) {
-          const depth = target.data.depth ?? 0;
-          const palette = theme.colors;
-          stroke = palette[depth % palette.length];
-        }
-      }
+      // Use theme border color for edges
+      const stroke = selectedTheme.borderColor;
       
       return { 
         ...e, 
@@ -77,7 +51,7 @@ const MindMap = () => {
         style: { 
           ...(e.style || {}), 
           stroke,
-          strokeWidth: 2.5 
+          strokeWidth: 1.5 
         },
         markerEnd: {
           type: 'arrowclosed' as const,
@@ -85,7 +59,7 @@ const MindMap = () => {
         }
       };
     });
-  }, [visibleEdges, nodesById, selectedTheme]);
+  }, [visibleEdges, selectedTheme]);
 
   const handleExport = async () => {
     if (!flowRef.current) return;

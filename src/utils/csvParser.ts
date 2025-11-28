@@ -85,7 +85,6 @@ export function csvToNodesAndEdges(csvRows: CSVRow[]): {
         depth: level, // Hierarchy level
         left_text: row.partNumber || '',
         right_text: row.quantity || '',
-        collapsed: false,
       },
     };
     

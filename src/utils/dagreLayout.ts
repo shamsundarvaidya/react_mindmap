@@ -15,8 +15,8 @@ export function getDagreLayoutedElements(
 
   dagreGraph.setGraph({ 
     rankdir: direction,
-    ranksep: 100,   // Vertical gap between ranks (horizontal in LR)
-    nodesep: direction === 'TB' ? 150 : 50,   // Horizontal gap (vertical in LR)
+    ranksep: 200,   // Gap between depths/ranks (horizontal gap in LR layout)
+    nodesep: direction === 'TB' ? 150 : 50,   // Gap between sibling nodes
   });
 
   // Set dagre nodes with dynamic size

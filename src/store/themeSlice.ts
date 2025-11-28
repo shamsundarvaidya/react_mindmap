@@ -1,15 +1,13 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { THEME_OPTIONS } from '../constants/themes';
 import { setThemeReducer } from './reducers/themeReducers';
+import  { type ColorScheme, getDefaultTheme } from '../constants/themes';
 
 export interface ThemeState {
-  selectedTheme: string;
-  backgroundColor: string;
+  selectedTheme: ColorScheme;
 }
 
 const initialState: ThemeState = {
-  selectedTheme: THEME_OPTIONS[0].name, // Default to Pastel
-  backgroundColor: THEME_OPTIONS[0].background,
+  selectedTheme: getDefaultTheme(), // Default to Light
 };
 
 const themeSlice = createSlice({

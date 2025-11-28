@@ -1,7 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { MindMapState, NodeData } from "../../types/mindmap";
 import type { Node, Edge } from "@xyflow/react";
-import { updateNodesWithDepth } from "../../utils/depthCalculation";
 import type { AppDispatch, RootState } from "../index";
 
 export function clearMindMap(state: MindMapState) {
@@ -11,8 +10,7 @@ export function clearMindMap(state: MindMapState) {
       type: "customNode",
       position: { x: 250, y: 100 },
       data: { 
-        label: "Root Node",
-        depth: 0 // Root node is always at depth 0
+        label: "Root Node"
       },
     },
   ];
@@ -49,10 +47,7 @@ export function loadMindMapFromLocalStorage(
     theme?: { selectedTheme?: string };
   }>
 ) {
-  // Ensure all loaded nodes have depth property
-  const nodesWithDepth = updateNodesWithDepth(action.payload.nodes, action.payload.edges);
-  
-  state.nodes = nodesWithDepth;
+  state.nodes = action.payload.nodes;
   state.edges = action.payload.edges;
   state.layoutDirection = action.payload.layoutDirection ?? 'LR';
   state.selectedNodeId = null;
@@ -65,10 +60,7 @@ export function importFromCSV(
 ) {
   const { nodes, edges } = action.payload;
   
-  // Update nodes with depth values
-  const nodesWithDepth = updateNodesWithDepth(nodes, edges);
-  
-  state.nodes = nodesWithDepth;
+  state.nodes = nodes;
   state.edges = edges;
   state.selectedNodeId = null;
 }

@@ -12,18 +12,13 @@ export const createChildNodeWithEdge = (
 ): NodeWithEdge => {
     const newId = nanoid();
     const parentId = parentNode.id;
-   
-    // Calculate depth for the new child node
-    const parentDepth = parentNode.data.depth ?? 0;
-    const childDepth = parentDepth + 1;
 
     const childNode = {
         id: newId,
         type: 'customNode',
         position: parentNode.position,
         data: { 
-          label: `Node`,
-          depth: childDepth
+          label: `Node`
         },
     };
 
@@ -43,16 +38,12 @@ export const createSiblingNodeWithEdge = (
     const newId = nanoid();
     const newPosition = siblingNode.position;
 
-    // Siblings have the same depth as the existing sibling
-    const siblingDepth = siblingNode.data.depth ?? 0;
-
     const newSiblingNode = {
         id: newId,
         type: 'customNode',
         position: newPosition,
         data: { 
-          label: `Node`,
-          depth: siblingDepth
+          label: `Node`
         },
     };
 

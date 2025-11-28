@@ -3,12 +3,8 @@ import type { Node, Edge } from '@xyflow/react';
 
 export interface NodeData extends Record<string, unknown> {
   label: string;
-  color?: string;
-  note?: string; 
   left_text?: string;
   right_text?: string;
-  collapsed?: boolean; // NEW: collapse state
-  depth?: number; // NEW: node depth in tree (for theme coloring)
 }
 
 
