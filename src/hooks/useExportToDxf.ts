@@ -1,4 +1,5 @@
 import { useReactFlow } from '@xyflow/react';
+import { useAppSelector } from '../store';
 import type { NodeData } from '../types/mindmap';
 import Drawing from 'dxf-writer';
 
@@ -7,13 +8,40 @@ const NODE_WIDTH = 200;
 const NODE_HEIGHT = 65; // 40 (upper) + 25 (lower)
 const NODE_HEIGHT_UPPER = 40;
 const LEFT_SECTION_WIDTH = NODE_WIDTH * 0.70;
+const ARROW_SIZE = 8;
+
+/**
+ * Draw an arrowhead at the end of an edge
+ */
+function drawArrow(d: InstanceType<typeof Drawing>, x: number, y: number, direction: 'left' | 'right' | 'up' | 'down') {
+  const size = ARROW_SIZE;
+  let points: [number, number][];
+  
+  switch (direction) {
+    case 'left':
+      points = [[x, y], [x + size, y - size/2], [x + size, y + size/2], [x, y]];
+      break;
+    case 'right':
+      points = [[x, y], [x - size, y - size/2], [x - size, y + size/2], [x, y]];
+      break;
+    case 'up':
+      points = [[x, y], [x - size/2, y - size], [x + size/2, y - size], [x, y]];
+      break;
+    case 'down':
+      points = [[x, y], [x - size/2, y + size], [x + size/2, y + size], [x, y]];
+      break;
+  }
+  
+  d.drawPolyline(points);
+}
 
 /**
  * Generate a DXF file using dxf-writer library
  */
 function generateDxf(
   nodes: { id: string; position: { x: number; y: number }; data: NodeData }[],
-  edges: { source: string; target: string }[]
+  edges: { source: string; target: string }[],
+  layoutDirection: 'LR' | 'TB'
 ): string {
   const d = new Drawing();
   
@@ -35,25 +63,41 @@ function generateDxf(
     const targetNode = nodeMap.get(edge.target);
     
     if (sourceNode && targetNode) {
-      // Start point: right side of source node, vertically centered
-      const x1 = sourceNode.position.x + NODE_WIDTH;
-      const y1 = -(sourceNode.position.y + NODE_HEIGHT / 2);
-      
-      // End point: left side of target node, vertically centered
-      const x2 = targetNode.position.x;
-      const y2 = -(targetNode.position.y + NODE_HEIGHT / 2);
-      
-      // Midpoint X for the vertical segment (halfway between nodes)
-      const midX = (x1 + x2) / 2;
-      
-      // Draw orthogonal path: horizontal -> vertical -> horizontal
-      // This creates a right-angle connection similar to smoothstep
-      d.drawPolyline([
-        [x1, y1],           // Start at source
-        [midX, y1],         // Go horizontal to midpoint
-        [midX, y2],         // Go vertical to target Y level
-        [x2, y2]            // Go horizontal to target
-      ]);
+      if (layoutDirection === 'LR') {
+        // Horizontal layout: connect right side of source to left side of target
+        const x1 = sourceNode.position.x + NODE_WIDTH;
+        const y1 = -(sourceNode.position.y + NODE_HEIGHT / 2);
+        const x2 = targetNode.position.x;
+        const y2 = -(targetNode.position.y + NODE_HEIGHT / 2);
+        const midX = (x1 + x2) / 2;
+        
+        d.drawPolyline([
+          [x1, y1],
+          [midX, y1],
+          [midX, y2],
+          [x2, y2]
+        ]);
+        
+        // Arrow pointing left (into target)
+        drawArrow(d, x2, y2, 'left');
+      } else {
+        // Vertical layout (TB): connect bottom of source to top of target
+        const x1 = sourceNode.position.x + NODE_WIDTH / 2;
+        const y1 = -(sourceNode.position.y + NODE_HEIGHT);
+        const x2 = targetNode.position.x + NODE_WIDTH / 2;
+        const y2 = -targetNode.position.y;
+        const midY = (y1 + y2) / 2;
+        
+        d.drawPolyline([
+          [x1, y1],
+          [x1, midY],
+          [x2, midY],
+          [x2, y2]
+        ]);
+        
+        // Arrow pointing down (into target)
+        drawArrow(d, x2, y2, 'down');
+      }
     }
   }
   
@@ -89,9 +133,10 @@ function generateDxf(
     const x = node.position.x;
     const y = -node.position.y;
     
-    // Title text (centered in upper section)
+    // Title text (approximate center positioning)
     const label = node.data.label || 'Node';
-    d.drawText(x + NODE_WIDTH / 2 - label.length * 3, y - 25, 10, 0, label);
+    const titleX = x + (NODE_WIDTH - label.length * 5) / 2; // Better centering estimate
+    d.drawText(Math.max(x + 5, titleX), y - 25, 10, 0, label);
     
     // Left text
     const leftText = node.data.left_text || '';
@@ -121,6 +166,7 @@ function downloadDxf(content: string, filename: string = 'mindmap.dxf') {
 
 export const useExportToDxf = () => {
   const { getNodes, getEdges } = useReactFlow();
+  const layoutDirection = useAppSelector((state) => state.mindmap.layoutDirection);
 
   const handleExportDxf = () => {
     const nodes = getNodes();
@@ -135,7 +181,8 @@ export const useExportToDxf = () => {
       edges.map(e => ({
         source: e.source,
         target: e.target
-      }))
+      })),
+      layoutDirection
     );
     
     downloadDxf(dxfContent);

@@ -57,14 +57,13 @@ export const createSiblingNodeWithEdge = (
 };
 
 
-// Helper to estimate node width based on label length
-export function getNodeSize(label: string) {
-  const baseWidth = 100; // minimum width
-  const charWidth = 20;  // average px per character
-  const padding = 50;   // padding for the node
-  const width = Math.max(baseWidth, label.length * charWidth + padding);
-  const height = 60; // You can also make this dynamic if needed
-  console.log(`Calculated size for label "${label}":`, { width, height });
-  return { width, height };
+// Fixed node dimensions (matching NetworkNode.tsx)
+const NODE_WIDTH = 200;
+const NODE_HEIGHT = 65; // 40 (upper) + 25 (lower)
+
+// Helper to get fixed node size (matches NetworkNode dimensions)
+export function getNodeSize(_label: string) {
+  // Use fixed dimensions matching the actual rendered node
+  return { width: NODE_WIDTH, height: NODE_HEIGHT };
 }
 
