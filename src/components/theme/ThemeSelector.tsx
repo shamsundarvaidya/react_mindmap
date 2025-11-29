@@ -1,4 +1,5 @@
-import { useColorScheme } from "../../hooks/useColorScheme";
+import { useAppDispatch } from "../../store";
+import { setTheme } from "../../store/themeSlice";
 import { THEME_OPTIONS } from "../../constants/themes";
 
 interface ThemeSelectorProps {
@@ -6,10 +7,10 @@ interface ThemeSelectorProps {
 }
 
 export function ThemeSelector({ onSelect }: ThemeSelectorProps) {
-  const { applyTheme } = useColorScheme();
+  const dispatch = useAppDispatch();
 
   const handleThemeSelect = (themeName: string) => {
-    applyTheme(themeName);
+    dispatch(setTheme(themeName));
     onSelect();
   };
 

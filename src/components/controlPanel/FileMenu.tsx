@@ -15,13 +15,15 @@ import {
   Upload, 
   Trash2,
   FileSpreadsheet,
-  FileImage
+  FileImage,
+  FileCode
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useClearMindMap } from "../../hooks/useClearMindMap";
 import { useSaveMindMap } from "../../hooks/useSaveMindMap";
 import { useExportToPng } from "../../hooks/useExportToPng";
 import { useExportToSvg } from "../../hooks/useExportToSvg";
+import { useExportToDxf } from "../../hooks/useExportToDxf";
 import { useExportToJson } from "../../hooks/useExportToJson";
 import { useImportFromJson } from "../../hooks/useImportFromJson";
 import { useImportFromCSV } from "../../hooks/useImportFromCSV";
@@ -35,6 +37,7 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
   const { handleSave } = useSaveMindMap();
   const { handleExportPng } = useExportToPng();
   const { handleExportSvg } = useExportToSvg();
+  const { handleExportDxf } = useExportToDxf();
   const { handleExportToJson } = useExportToJson();
   const { inputRef, handleUpload, triggerFileSelect } = useImportFromJson();
   const { inputRef: csvInputRef, handleCSVUpload, triggerCSVFileSelect } = useImportFromCSV();
@@ -100,6 +103,14 @@ const FileMenu: React.FC<{ children?: React.ReactNode }> & {
         >
           <FileImage className="mr-3 h-4 w-4" />
           <span>Export as SVG</span>
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={createHandler(handleExportDxf)}
+          className="hover:bg-slate-700 hover:text-white focus:bg-slate-700 focus:text-white cursor-pointer"
+        >
+          <FileCode className="mr-3 h-4 w-4" />
+          <span>Export as DXF</span>
         </DropdownMenuItem>
         
         <DropdownMenuSeparator className="bg-slate-700 my-2" />

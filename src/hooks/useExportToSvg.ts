@@ -1,4 +1,4 @@
-import { useReactFlow, getNodesBounds, getViewportForBounds } from '@xyflow/react';
+import { useReactFlow, getNodesBounds } from '@xyflow/react';
 import { useAppDispatch, useAppSelector } from '../store';
 import { selectNode } from '../store/mindmapSlice';
 import { toSvg } from 'html-to-image';

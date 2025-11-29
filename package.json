@@ -32,6 +32,7 @@
     "d3": "^7.9.0",
     "d3-hierarchy": "^3.1.2",
     "dagre": "^0.8.5",
+    "dxf-writer": "^1.18.4",
     "gojs": "^3.0.26",
     "graphology": "^0.26.0",
     "graphology-types": "^0.24.8",
