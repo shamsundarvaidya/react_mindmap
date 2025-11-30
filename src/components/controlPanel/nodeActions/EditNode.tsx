@@ -32,7 +32,7 @@ const EditNode: React.FC = () => {
       <DialogTrigger asChild>
         <Button
           disabled={!canEdit}
-          className="bg-blue-500 hover:bg-blue-600 text-white shadow min-w-[100px] w-full sm:w-auto"
+          className="min-w-[110px] w-full bg-gradient-to-r from-cyan-300 via-cyan-200 to-emerald-300 text-slate-900 shadow-[0_10px_22px_rgba(6,182,212,0.35)] hover:from-cyan-200 hover:to-emerald-200 sm:w-auto"
           title="Edit Node"
         >
           <Edit3 className="h-4 w-4 mr-2" />
@@ -40,10 +40,10 @@ const EditNode: React.FC = () => {
         </Button>
       </DialogTrigger>
       
-      <DialogContent className="sm:max-w-[500px] bg-white text-gray-900 backdrop-blur-md">
+      <DialogContent className="sm:max-w-[520px] border border-cyan-500/30 bg-slate-950/95 text-slate-100 shadow-xl shadow-cyan-900/30 backdrop-blur">
         <DialogHeader>
-          <DialogTitle className="text-gray-900">Edit Node Fields</DialogTitle>
-          <DialogDescription className="text-gray-600">
+          <DialogTitle className="text-slate-50">Edit Node Fields</DialogTitle>
+          <DialogDescription className="text-slate-400">
             Edit the title and additional fields for the selected node.
           </DialogDescription>
         </DialogHeader>
@@ -51,7 +51,7 @@ const EditNode: React.FC = () => {
         <div className="space-y-4 py-4">
           {/* Title Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-cyan-100/80">
               Title *
             </label>
             <input
@@ -59,13 +59,13 @@ const EditNode: React.FC = () => {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter node title"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-lg border border-cyan-500/30 bg-slate-900/80 px-3 py-2 text-slate-100 placeholder:text-slate-500 shadow-inner shadow-black/30 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/60"
             />
           </div>
 
           {/* Left Text Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-cyan-100/80">
               Left Text
             </label>
             <input
@@ -73,13 +73,13 @@ const EditNode: React.FC = () => {
               value={leftText}
               onChange={(e) => setLeftText(e.target.value)}
               placeholder="Enter left section text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-lg border border-cyan-500/30 bg-slate-900/80 px-3 py-2 text-slate-100 placeholder:text-slate-500 shadow-inner shadow-black/30 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/60"
             />
           </div>
 
           {/* Right Text Field */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-cyan-100/80">
               Right Text
             </label>
             <input
@@ -87,7 +87,7 @@ const EditNode: React.FC = () => {
               value={rightText}
               onChange={(e) => setRightText(e.target.value)}
               placeholder="Enter right section text"
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-lg border border-cyan-500/30 bg-slate-900/80 px-3 py-2 text-slate-100 placeholder:text-slate-500 shadow-inner shadow-black/30 focus:border-cyan-400/60 focus:outline-none focus:ring-2 focus:ring-cyan-400/60"
             />
           </div>
         </div>
@@ -96,12 +96,13 @@ const EditNode: React.FC = () => {
           <Button
             onClick={handleClose}
             variant="outline"
+            className="border-cyan-500/30 bg-transparent text-slate-100 hover:bg-cyan-500/10"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
-            className="bg-blue-500 hover:bg-blue-600 text-white"
+            className="bg-gradient-to-r from-cyan-300 via-cyan-200 to-emerald-300 text-slate-900 shadow-[0_10px_22px_rgba(6,182,212,0.35)] hover:from-cyan-200 hover:to-emerald-200"
           >
             Save Changes
           </Button>

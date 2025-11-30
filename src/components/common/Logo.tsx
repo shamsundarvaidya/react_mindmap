@@ -5,12 +5,14 @@ interface LogoProps {
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
   className?: string;
+  isDark?: boolean;
 }
 
 const Logo: React.FC<LogoProps> = ({ 
   size = 'md', 
   showText = true, 
-  className 
+  className,
+  isDark = true,
 }) => {
   const sizeClasses = {
     sm: {
@@ -36,14 +38,20 @@ const Logo: React.FC<LogoProps> = ({
     <div className={cn("flex items-center gap-3", className)}>
       <div className={cn(
         currentSize.container,
-        "bg-gradient-to-br from-sky-400 via-cyan-500 to-slate-900 rounded-xl flex items-center justify-center shadow-md border border-white/20"
+        "rounded-xl flex items-center justify-center shadow-md",
+        isDark
+          ? "bg-gradient-to-br from-sky-400 via-cyan-500 to-slate-900 border border-white/20"
+          : "bg-gradient-to-br from-white via-sky-100 to-cyan-100 border border-sky-200"
       )}>
         <svg 
           width={currentSize.iconSize} 
           height={currentSize.iconSize} 
           viewBox="0 0 24 24" 
           fill="none" 
-          className="text-white/90 drop-shadow"
+          className={cn(
+            "drop-shadow",
+            isDark ? "text-white/90" : "text-slate-800"
+          )}
         >
           {/* Stylized network glyph */}
           <circle cx="6" cy="6" r="2.2" stroke="currentColor" strokeWidth="1.4" />
@@ -55,9 +63,10 @@ const Logo: React.FC<LogoProps> = ({
       {showText && (
         <div className={cn(
           currentSize.text,
-          "text-white tracking-tight select-none"
+          "tracking-tight select-none",
+          isDark ? "text-white" : "text-slate-900"
         )}>
-          Network <span className="text-cyan-300">Diagram</span>
+          Network <span className={cn(isDark ? "text-cyan-300" : "text-sky-500")}>Diagram</span>
         </div>
       )}
     </div>

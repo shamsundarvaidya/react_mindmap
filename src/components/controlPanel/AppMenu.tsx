@@ -2,25 +2,23 @@
 import FileMenu from "./FileMenu";
 import SettingsMenu from "./SettingsMenu";
 
+type AppMenuProps = {
+  isDark?: boolean;
+};
 
-
-
-
-const AppMenu = () => {
- 
-  // inline (desktop) - compact group
+const AppMenu = ({ isDark = true }: AppMenuProps) => {
   return (
     <div
-      className="inline-flex items-center bg-slate-800/90 rounded-lg shadow-lg border border-slate-600 backdrop-blur-sm"
+      className={
+        isDark
+          ? "inline-flex items-center gap-2 rounded-xl bg-slate-900/70 px-2 py-1 shadow-[0_12px_30px_rgba(0,0,0,0.45)] shadow-cyan-900/40 backdrop-blur"
+          : "inline-flex items-center gap-2 rounded-xl bg-white/90 px-2 py-1 shadow-[0_10px_24px_rgba(15,118,110,0.14)]"
+      }
       role="group"
       aria-label="Application menu"
     >
-      <div className="px-2 py-1 hidden md:block overflow-hidden first:rounded-l-lg">
-        <FileMenu />
-      </div>
-      <div className="border-l border-slate-500 px-2 py-1 hidden md:block overflow-hidden">
-        <SettingsMenu />
-      </div>
+      <FileMenu isDark={isDark} />
+      <SettingsMenu isDark={isDark} />
     </div>
   );
 };
