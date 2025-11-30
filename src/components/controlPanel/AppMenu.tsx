@@ -1,7 +1,6 @@
 
 import FileMenu from "./FileMenu";
 import SettingsMenu from "./SettingsMenu";
-import ThemeMenu from "./ThemeMenu";
 
 
 
@@ -21,9 +20,6 @@ const AppMenu = () => {
       </div>
       <div className="border-l border-slate-500 px-2 py-1 hidden md:block overflow-hidden">
         <SettingsMenu />
-      </div>
-      <div className="border-l border-slate-500 px-2 py-1 hidden md:block overflow-hidden last:rounded-r-lg">
-        <ThemeMenu />
       </div>
     </div>
   );

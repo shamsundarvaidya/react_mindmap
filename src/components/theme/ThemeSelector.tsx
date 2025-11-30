@@ -1,6 +1,7 @@
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { setTheme } from "../../store/themeSlice";
 import { THEME_OPTIONS } from "../../constants/themes";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 interface ThemeSelectorProps {
   onSelect: () => void;
@@ -8,6 +9,9 @@ interface ThemeSelectorProps {
 
 export function ThemeSelector({ onSelect }: ThemeSelectorProps) {
   const dispatch = useAppDispatch();
+  const selectedTheme = useAppSelector(
+    (state) => state.theme.selectedTheme.name
+  );
 
   const handleThemeSelect = (themeName: string) => {
     dispatch(setTheme(themeName));
@@ -15,17 +19,23 @@ export function ThemeSelector({ onSelect }: ThemeSelectorProps) {
   };
 
   return (
-    <>
+    <ToggleGroup
+      type="single"
+      value={selectedTheme}
+      onValueChange={(value) => value && handleThemeSelect(value)}
+      className="grid w-full grid-cols-2 gap-2"
+    >
       {THEME_OPTIONS.map(({ name, emoji, label }) => (
-        <button
+        <ToggleGroupItem
           key={name}
-          className="w-full inline-flex items-center gap-2 px-3 py-2 rounded-md text-slate-300 hover:bg-slate-700 hover:text-white text-sm transition-colors duration-200"
-          onClick={() => handleThemeSelect(name)}
+          value={name}
+          aria-label={`${label} theme`}
+          className="justify-start"
         >
           <span className="text-lg">{emoji}</span>
-          <span>{label}</span>
-        </button>
+          <span className="text-sm">{label}</span>
+        </ToggleGroupItem>
       ))}
-    </>
+    </ToggleGroup>
   );
 }

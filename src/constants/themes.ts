@@ -48,6 +48,7 @@ export function getThemeByName(themeName: string): ColorScheme  {
     return theme_found;
   }
   else {
+    console.log("Theme  not found:", themeName)
     return THEME_OPTIONS[0];
   }
 }

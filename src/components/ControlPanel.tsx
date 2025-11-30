@@ -1,5 +1,6 @@
 import NodeMenu from "./controlPanel/NodeMenu";
 import AppMenu from "./controlPanel/AppMenu";
+import ThemeSwitch from "./controlPanel/ThemeSwitch";
 import Logo from "./common/Logo";
 
 const ControlPanel = () => {
@@ -13,10 +14,10 @@ const ControlPanel = () => {
             <AppMenu />
           </div>
 
-          
           <div className="flex items-center gap-3">
+            <ThemeSwitch />
             <NodeMenu />     
-          </div> 
+          </div>
         </div>
       </div>
     </>
